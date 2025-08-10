@@ -1,0 +1,20 @@
+{
+  "name": "calc",
+  "type": "module",
+  "private": true,
+  "workspaces": ["frontend", "server"],
+  "scripts": {
+    "dev": "bun run dev:frontend & bun run dev:server",
+    "dev:frontend": "cd frontend && bun run dev",
+    "dev:server": "cd server && bun run dev",
+    "dev:local": "export $(cat .env.local | xargs) && bun run dev",
+    "install:all": "bun install && cd frontend && bun install && cd ../server && bun install",
+    "build": "cd frontend && bun run build",
+    "db:setup": "./scripts/setup-db.sh",
+    "db:push": "supabase db push -p $SUPABASE_DB_PASSWORD",
+    "supabase:start": "./scripts/start-local.sh",
+    "supabase:stop": "supabase stop",
+    "supabase:status": "supabase status",
+    "supabase:reset": "supabase db reset"
+  }
+}

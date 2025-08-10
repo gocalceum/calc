@@ -1,0 +1,8 @@
+/* App specific styles - minimal to avoid conflicts with Tailwind */
+
+.app-container {
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Remove all conflicting global styles that override Tailwind */
