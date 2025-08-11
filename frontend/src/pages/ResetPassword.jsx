@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '@/supabaseClient'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -12,7 +12,6 @@ export default function ResetPassword() {
   const [error, setError] = useState(null)
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const supabase = createClient()
 
   useEffect(() => {
     // Check if we have a valid session from the reset link

@@ -1,38 +1,46 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React from 'react'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '@/supabaseClient'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
-export default function SignUpNew() {
+export default function Login() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
+  const [message, setMessage] = useState<string | null>(null)
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    // Check for success message from password reset
+    const msg = searchParams.get('message')
+    if (msg) {
+      setMessage(msg)
+    }
+  }, [searchParams])
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError(null)
     setLoading(true)
 
-    const formData = new FormData(e.target)
-    const email = formData.get('email')
-    const password = formData.get('password')
+    const formData = new FormData(e.currentTarget)
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
 
-    const { error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/confirm`,
-      },
     })
 
     if (error) {
       setError(error.message)
       setLoading(false)
     } else {
-      navigate('/signup?success=true')
+      navigate('/dashboard')
     }
   }
 
@@ -73,34 +81,6 @@ export default function SignUpNew() {
     }
   }
 
-  const searchParams = new URLSearchParams(window.location.search)
-  const success = searchParams.get('success')
-
-  if (success) {
-    return (
-      <div className="flex min-h-screen w-full items-center justify-center p-6 md:p-10">
-        <div className="w-full max-w-sm">
-          <Card>
-            <CardHeader className="text-center">
-              <img 
-                src="/Calceum LOGO 1F_PNG.png" 
-                alt="Calceum Logo" 
-                className="mx-auto mb-4 h-12 w-auto"
-              />
-              <CardTitle className="text-2xl">Check Your Email</CardTitle>
-              <CardDescription>We've sent you a confirmation link</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Please check your email to confirm your account before signing in.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="flex min-h-screen w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
@@ -112,8 +92,8 @@ export default function SignUpNew() {
                 alt="Calceum Logo" 
                 className="mx-auto mb-4 h-12 w-auto"
               />
-              <CardTitle className="text-2xl">Create an account</CardTitle>
-              <CardDescription>Enter your email below to create your account</CardDescription>
+              <CardTitle className="text-2xl">Login</CardTitle>
+              <CardDescription>Enter your email below to login to your account</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit}>
@@ -129,7 +109,15 @@ export default function SignUpNew() {
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="password">Password</Label>
+                    <div className="flex items-center">
+                      <Label htmlFor="password">Password</Label>
+                      <Link 
+                        to="/forgot-password" 
+                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                      >
+                        Forgot password?
+                      </Link>
+                    </div>
                     <Input
                       id="password"
                       type="password"
@@ -138,9 +126,10 @@ export default function SignUpNew() {
                       required
                     />
                   </div>
+                  {message && <p className="text-sm text-green-600">{message}</p>}
                   {error && <p className="text-sm text-red-500">{error}</p>}
                   <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? 'Creating account...' : 'Create account'}
+                    {loading ? 'Logging in...' : 'Login'}
                   </Button>
                 </div>
                 
@@ -196,9 +185,9 @@ export default function SignUpNew() {
                 </div>
                 
                 <div className="mt-4 text-center text-sm">
-                  Already have an account?{' '}
-                  <Link to="/login" className="underline underline-offset-4">
-                    Login
+                  Don't have an account?{' '}
+                  <Link to="/signup" className="underline underline-offset-4">
+                    Sign up
                   </Link>
                 </div>
               </form>

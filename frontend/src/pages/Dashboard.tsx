@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '@/supabaseClient'
 import type { Session } from '@supabase/supabase-js'
 import { AppSidebar } from "@/components/app-sidebar"
 import {
@@ -22,8 +22,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 export default function Dashboard() {
   const navigate = useNavigate()
   const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
-  const supabase = createClient()
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     // Check if user is authenticated

@@ -1,7 +1,6 @@
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '@/supabaseClient'
 
 export default function DebugAuth() {
-  const supabase = createClient()
   
   // Get the actual Supabase URL being used
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
