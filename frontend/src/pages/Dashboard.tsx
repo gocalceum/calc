@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/supabaseClient'
 import type { Session } from '@supabase/supabase-js'
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from '@/components/app-sidebar'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,14 +10,10 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+} from '@/components/ui/breadcrumb'
+import { Separator } from '@/components/ui/separator'
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -35,7 +31,9 @@ export default function Dashboard() {
       }
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session) {
         navigate('/login')
       } else {
@@ -44,7 +42,7 @@ export default function Dashboard() {
     })
 
     return () => subscription.unsubscribe()
-  }, [navigate, supabase])
+  }, [navigate])
 
   if (loading) {
     return (
@@ -64,9 +62,7 @@ export default function Dashboard() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="/dashboard">
-                  Dashboard
-                </BreadcrumbLink>
+                <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
@@ -79,93 +75,69 @@ export default function Dashboard() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Total Calculations
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Total Calculations</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">0</div>
-                <p className="text-xs text-muted-foreground">
-                  Start creating calculations
-                </p>
+                <p className="text-xs text-muted-foreground">Start creating calculations</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Recent Activity
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Recent Activity</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">0</div>
-                <p className="text-xs text-muted-foreground">
-                  No recent activity
-                </p>
+                <p className="text-xs text-muted-foreground">No recent activity</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Saved Templates
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Saved Templates</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">0</div>
-                <p className="text-xs text-muted-foreground">
-                  Create your first template
-                </p>
+                <p className="text-xs text-muted-foreground">Create your first template</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Profile Status
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Profile Status</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">Active</div>
-                <p className="text-xs text-muted-foreground">
-                  {session?.user?.email}
-                </p>
+                <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
               </CardContent>
             </Card>
           </div>
-          
+
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle>Welcome to Calceum</CardTitle>
-                <CardDescription>
-                  Your powerful calculation platform
-                </CardDescription>
+                <CardDescription>Your powerful calculation platform</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Get started by creating your first calculation or exploring our templates.
-                  Calceum provides advanced calculation tools for all your computational needs.
+                  Get started by creating your first calculation or exploring our templates. Calceum
+                  provides advanced calculation tools for all your computational needs.
                 </p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader>
                 <CardTitle>Quick Actions</CardTitle>
-                <CardDescription>
-                  Get started with these common tasks
-                </CardDescription>
+                <CardDescription>Get started with these common tasks</CardDescription>
               </CardHeader>
               <CardContent className="grid gap-2">
                 <button className="text-left text-sm hover:text-primary">
                   → Create new calculation
                 </button>
-                <button className="text-left text-sm hover:text-primary">
-                  → Browse templates
-                </button>
+                <button className="text-left text-sm hover:text-primary">→ Browse templates</button>
                 <button className="text-left text-sm hover:text-primary">
                   → View documentation
                 </button>
-                <button className="text-left text-sm hover:text-primary">
-                  → Account settings
-                </button>
+                <button className="text-left text-sm hover:text-primary">→ Account settings</button>
               </CardContent>
             </Card>
           </div>

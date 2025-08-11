@@ -14,13 +14,9 @@ import {
   Folder,
   ChevronsUpDown,
   LucideIcon,
-} from "lucide-react"
+} from 'lucide-react'
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,7 +25,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu'
 import {
   Sidebar,
   SidebarContent,
@@ -41,7 +37,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar'
 
 interface MenuItem {
   title: string
@@ -52,46 +48,46 @@ interface MenuItem {
 // Menu items.
 const items: MenuItem[] = [
   {
-    title: "Dashboard",
-    url: "/dashboard",
+    title: 'Dashboard',
+    url: '/dashboard',
     icon: Home,
   },
   {
-    title: "Calculations",
-    url: "/calculations",
+    title: 'Calculations',
+    url: '/calculations',
     icon: Calculator,
   },
   {
-    title: "Templates",
-    url: "/templates",
+    title: 'Templates',
+    url: '/templates',
     icon: FileText,
   },
   {
-    title: "History",
-    url: "/history",
+    title: 'History',
+    url: '/history',
     icon: Clock,
   },
   {
-    title: "Projects",
-    url: "/projects",
+    title: 'Projects',
+    url: '/projects',
     icon: Folder,
   },
   {
-    title: "Analytics",
-    url: "/analytics",
+    title: 'Analytics',
+    url: '/analytics',
     icon: BarChart,
   },
 ]
 
 const bottomItems: MenuItem[] = [
   {
-    title: "Settings",
-    url: "/settings",
+    title: 'Settings',
+    url: '/settings',
     icon: Settings,
   },
   {
-    title: "Profile",
-    url: "/profile",
+    title: 'Profile',
+    url: '/profile',
     icon: UserIcon,
   },
 ]
@@ -107,12 +103,14 @@ export function AppSidebar() {
     })
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null)
     })
 
     return () => subscription.unsubscribe()
-  }, [supabase])
+  }, [])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -141,11 +139,7 @@ export function AppSidebar() {
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
                   <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    <img 
-                      src="/Calceum LOGO 1F_PNG.png" 
-                      alt="Calceum" 
-                      className="h-6 w-auto"
-                    />
+                    <img src="/Calceum LOGO 1F_PNG.png" alt="Calceum" className="h-6 w-auto" />
                   </div>
                   <div className="flex flex-col gap-0.5 leading-none">
                     <span className="font-semibold">Calceum</span>
@@ -230,9 +224,7 @@ export function AppSidebar() {
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src={user?.user_metadata?.avatar_url} alt={user?.email} />
-                    <AvatarFallback className="rounded-lg">
-                      {getUserInitials()}
-                    </AvatarFallback>
+                    <AvatarFallback className="rounded-lg">{getUserInitials()}</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">
@@ -255,9 +247,7 @@ export function AppSidebar() {
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarImage src={user?.user_metadata?.avatar_url} alt={user?.email} />
-                      <AvatarFallback className="rounded-lg">
-                        {getUserInitials()}
-                      </AvatarFallback>
+                      <AvatarFallback className="rounded-lg">{getUserInitials()}</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">

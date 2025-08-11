@@ -14,11 +14,11 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   asChild?: boolean
 }
 
-export interface CardProps extends BaseProps {}
-export interface CardHeaderProps extends BaseProps {}
-export interface CardTitleProps extends BaseProps {}
-export interface CardDescriptionProps extends BaseProps {}
-export interface CardContentProps extends BaseProps {}
-export interface CardFooterProps extends BaseProps {}
+export type CardProps = BaseProps
+export type CardHeaderProps = BaseProps
+export type CardTitleProps = BaseProps
+export type CardDescriptionProps = BaseProps
+export type CardContentProps = BaseProps
+export type CardFooterProps = BaseProps
 
 // Add more component types as needed

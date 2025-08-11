@@ -2,7 +2,10 @@
   "name": "calc",
   "type": "module",
   "private": true,
-  "workspaces": ["frontend", "server"],
+  "workspaces": [
+    "frontend",
+    "server"
+  ],
   "scripts": {
     "dev": "bun run dev:frontend & bun run dev:server",
     "dev:frontend": "cd frontend && bun run dev",
@@ -15,7 +18,8 @@
     "supabase:start": "./scripts/start-local.sh",
     "supabase:stop": "supabase stop",
     "supabase:status": "supabase status",
-    "supabase:reset": "supabase db reset"
+    "supabase:reset": "supabase db reset",
+    "prepare": "husky"
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.2"

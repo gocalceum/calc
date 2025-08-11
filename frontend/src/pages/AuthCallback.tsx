@@ -23,7 +23,7 @@ export default function AuthCallback() {
       // Exchange the code for a session
       if (code) {
         const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code)
-        
+
         if (sessionError) {
           console.error('Error exchanging code for session:', sessionError)
           navigate(`/login?error=${encodeURIComponent(sessionError.message)}`)
@@ -38,7 +38,7 @@ export default function AuthCallback() {
     }
 
     handleCallback()
-  }, [navigate, supabase])
+  }, [navigate])
 
   return (
     <div className="container mx-auto flex min-h-screen items-center justify-center px-4">
