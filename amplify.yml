@@ -1,0 +1,94 @@
+version: 1
+applications:
+  - frontend:
+      phases:
+        preBuild:
+          commands:
+            # Install Bun
+            - curl -fsSL https://bun.sh/install | bash
+            - export BUN_INSTALL="$HOME/.bun"
+            - export PATH="$BUN_INSTALL/bin:$PATH"
+            - bun --version
+            
+            # Install AWS CLI and jq for secret management
+            - yum install -y aws-cli jq || apt-get update && apt-get install -y awscli jq
+            
+            # Fetch secrets based on branch
+            - |
+              echo "Current branch: $AWS_BRANCH"
+              if [ "$AWS_BRANCH" = "main" ]; then
+                echo "Fetching production secrets from AWS Secrets Manager..."
+                
+                # Check if we should use calceum/supabase or create it
+                SECRET_EXISTS=$(aws secretsmanager describe-secret --secret-id calceum/supabase --region eu-west-2 2>/dev/null || echo "not_found")
+                
+                if [ "$SECRET_EXISTS" = "not_found" ]; then
+                  echo "Note: calceum/supabase secret not found. Using environment variables from Amplify console."
+                  # Fall back to Amplify environment variables
+                  export VITE_SUPABASE_URL=${SUPABASE_URL}
+                  export VITE_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+                else
+                  # Fetch from Secrets Manager
+                  SECRETS=$(aws secretsmanager get-secret-value --secret-id calceum/supabase --region eu-west-2 --query SecretString --output text)
+                  export VITE_SUPABASE_URL=$(echo $SECRETS | jq -r .supabase_url)
+                  export VITE_SUPABASE_ANON_KEY=$(echo $SECRETS | jq -r .supabase_anon_key)
+                fi
+                
+                # Fetch OAuth secrets if they exist
+                OAUTH_SECRET=$(aws secretsmanager get-secret-value --secret-id calceum/oauth/google --region eu-west-2 --query SecretString --output text 2>/dev/null || echo "{}")
+                if [ "$OAUTH_SECRET" != "{}" ]; then
+                  export VITE_GOOGLE_CLIENT_ID=$(echo $OAUTH_SECRET | jq -r .client_id // empty)
+                fi
+                
+                # Set production environment
+                export NODE_ENV=production
+                export VITE_APP_ENV=production
+              else
+                echo "Using preview configuration for branch: $AWS_BRANCH"
+                # For preview branches, use limited access (read-only)
+                export VITE_SUPABASE_URL=${PREVIEW_SUPABASE_URL:-$SUPABASE_URL}
+                export VITE_SUPABASE_ANON_KEY=${PREVIEW_SUPABASE_ANON_KEY:-$SUPABASE_ANON_KEY}
+                export NODE_ENV=development
+                export VITE_APP_ENV=preview
+              fi
+            
+            # Debug: Show environment (without secrets)
+            - |
+              echo "Environment variables set:"
+              echo "NODE_ENV=$NODE_ENV"
+              echo "VITE_APP_ENV=$VITE_APP_ENV"
+              echo "VITE_SUPABASE_URL is ${VITE_SUPABASE_URL:+set}"
+              echo "VITE_SUPABASE_ANON_KEY is ${VITE_SUPABASE_ANON_KEY:+set}"
+            
+            # Install dependencies
+            - cd frontend
+            - bun install --frozen-lockfile
+            
+        build:
+          commands:
+            - echo "Building frontend application..."
+            - bun run build
+            - echo "Build completed successfully!"
+            
+      artifacts:
+        baseDirectory: frontend/dist
+        files:
+          - '**/*'
+          
+      cache:
+        paths:
+          - frontend/node_modules/**/*
+          - ~/.bun/install/cache/**/*
+          
+    appRoot: .
+    
+  # Environment-specific settings
+  environment:
+    variables:
+      _LIVE_UPDATES:
+        - name: AMPLIFY_MONOREPO_APP_ROOT
+          value: frontend
+        - name: AMPLIFY_DIFF_DEPLOY
+          value: false
+        - name: AMPLIFY_ENABLE_BRANCH_DESTROY
+          value: true

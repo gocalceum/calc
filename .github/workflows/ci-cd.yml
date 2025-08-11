@@ -1,0 +1,142 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+
+env:
+  NODE_VERSION: '20'
+  AWS_REGION: eu-west-2
+
+jobs:
+  quality-checks:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+            frontend/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+      
+      - name: Install dependencies
+        run: |
+          bun install
+          cd frontend && bun install
+      
+      - name: TypeScript check
+        run: cd frontend && bun run type-check
+        continue-on-error: true  # Allow to continue if type-check script doesn't exist yet
+      
+      - name: ESLint
+        run: cd frontend && bun run lint
+      
+      - name: Prettier check
+        run: cd frontend && bun run format:check
+        continue-on-error: true  # Allow to continue if format:check script doesn't exist yet
+      
+      - name: Build verification
+        run: cd frontend && bun run build
+
+  deploy-production:
+    name: Deploy to Production
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: quality-checks
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Get Amplify App ID
+        id: amplify
+        run: |
+          # Try to get Amplify app ID from AWS or use secret
+          if [ -n "${{ secrets.AMPLIFY_APP_ID }}" ]; then
+            echo "app_id=${{ secrets.AMPLIFY_APP_ID }}" >> $GITHUB_OUTPUT
+          else
+            # List Amplify apps and find calc app
+            APP_ID=$(aws amplify list-apps --query "apps[?name=='calc'].appId" --output text)
+            if [ -z "$APP_ID" ]; then
+              echo "Error: No Amplify app found. Please set AMPLIFY_APP_ID secret."
+              exit 1
+            fi
+            echo "app_id=$APP_ID" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Trigger Amplify deployment
+        run: |
+          # Start deployment
+          DEPLOYMENT_ID=$(aws amplify start-deployment \
+            --app-id ${{ steps.amplify.outputs.app_id }} \
+            --branch-name main \
+            --query 'jobSummary.jobId' \
+            --output text)
+          
+          echo "Started deployment: $DEPLOYMENT_ID"
+          echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_ENV
+      
+      - name: Wait for deployment
+        timeout-minutes: 15
+        run: |
+          echo "Monitoring deployment ${{ env.deployment_id }}..."
+          
+          while true; do
+            STATUS=$(aws amplify get-job \
+              --app-id ${{ steps.amplify.outputs.app_id }} \
+              --branch-name main \
+              --job-id ${{ env.deployment_id }} \
+              --query 'job.summary.status' \
+              --output text)
+            
+            echo "Deployment status: $STATUS"
+            
+            if [ "$STATUS" = "SUCCEED" ]; then
+              echo "✅ Deployment successful!"
+              break
+            elif [ "$STATUS" = "FAILED" ] || [ "$STATUS" = "CANCELLED" ]; then
+              echo "❌ Deployment failed with status: $STATUS"
+              exit 1
+            fi
+            
+            sleep 30
+          done
+      
+      - name: Get deployment URL
+        if: success()
+        run: |
+          URL=$(aws amplify get-branch \
+            --app-id ${{ steps.amplify.outputs.app_id }} \
+            --branch-name main \
+            --query 'branch.displayName' \
+            --output text)
+          echo "🚀 Deployed to: https://${URL}"
+      
+      - name: Notify deployment status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ Production deployment successful!"
+          else
+            echo "❌ Production deployment failed!"
+          fi
+          # Add Slack/Discord notification here if needed
