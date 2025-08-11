@@ -5,6 +5,10 @@ import Layout from './components/Layout'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import SignUpNew from './pages/SignUpNew'
+import AuthCallback from './pages/AuthCallback'
+import DebugAuth from './pages/DebugAuth'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import './App.css'
 import './index.css'
 
@@ -44,6 +48,10 @@ function App() {
           <Route path="login" element={!session ? <Login /> : <Navigate to="/" />} />
           <Route path="signup" element={!session ? <SignUpNew /> : <Navigate to="/" />} />
           <Route path="signin" element={<Navigate to="/login" />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset-password" element={<ResetPassword />} />
+          <Route path="auth/callback" element={<AuthCallback />} />
+          <Route path="debug-auth" element={<DebugAuth />} />
         </Route>
       </Routes>
     </BrowserRouter>

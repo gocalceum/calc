@@ -1,111 +1,125 @@
----
-description: Use Bun instead of Node.js, npm, pnpm, or vite.
-globs: "*.ts, *.tsx, *.html, *.css, *.js, *.jsx, package.json"
-alwaysApply: false
----
+# CLAUDE.md
 
-Default to using Bun instead of Node.js.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-- Use `bun <file>` instead of `node <file>` or `ts-node <file>`
-- Use `bun test` instead of `jest` or `vitest`
-- Use `bun build <file.html|file.ts|file.css>` instead of `webpack` or `esbuild`
-- Use `bun install` instead of `npm install` or `yarn install` or `pnpm install`
-- Use `bun run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
-- Bun automatically loads .env, so don't use dotenv.
+## Tech Stack and Tools
 
-## APIs
+**Package Manager**: Always use Bun, not npm/yarn/pnpm
+- `bun install` instead of `npm install`
+- `bun run <script>` instead of `npm run <script>`
+- `bun test` for running tests
+- Bun automatically loads .env files
 
-- `Bun.serve()` supports WebSockets, HTTPS, and routes. Don't use `express`.
-- `bun:sqlite` for SQLite. Don't use `better-sqlite3`.
-- `Bun.redis` for Redis. Don't use `ioredis`.
-- `Bun.sql` for Postgres. Don't use `pg` or `postgres.js`.
-- `WebSocket` is built-in. Don't use `ws`.
-- Prefer `Bun.file` over `node:fs`'s readFile/writeFile
-- Bun.$`ls` instead of execa.
+**Frontend**: Vite + React + Tailwind CSS v3 + shadcn/ui
+- Located in `/frontend` directory
+- Uses Vite dev server on port 4011
+- React Router v7 for routing
+- shadcn/ui components with Radix UI primitives
+- Tailwind CSS v3 (not v4) for styling
+
+**Backend**: Bun server (TypeScript)
+- Located in `/server` directory
+- Runs on port 4010
+- Uses native Bun APIs for server functionality
+
+**Database & Auth**: Supabase
+- PostgreSQL database
+- Built-in authentication (email/password, OAuth)
+- Row Level Security (RLS)
+- Local development uses Supabase CLI with Docker
+
+## Essential Commands
+
+```bash
+# Development
+cd frontend && bun run dev    # Start frontend (port 4011)
+cd server && bun run dev      # Start backend (port 4010)
+bun run dev                    # Start both frontend and backend
+
+# Local Supabase Development
+bun run supabase:start         # Start local Supabase (requires Docker)
+bun run supabase:stop          # Stop local Supabase
+bun run supabase:status        # Check Supabase status
+bun run supabase:reset         # Reset database with migrations
+
+# Building
+cd frontend && bun run build  # Build frontend for production
+
+# Database
+bun run db:setup              # Initial database setup
+bun run db:push               # Push migrations to production
+
+# Dependencies
+bun install                   # Install root dependencies
+bun run install:all           # Install all workspace dependencies
+```
+
+## Project Structure
+
+Monorepo with three main workspaces:
+- `/frontend` - React SPA with Vite
+- `/server` - Bun TypeScript API server  
+- `/supabase` - Database migrations and configuration
+
+Key configuration files:
+- `.env` - Production environment variables
+- `.env.local` - Local development environment variables
+- `frontend/vite.config.js` - Vite configuration (envDir points to parent directory)
+- `supabase/config.toml` - Supabase local configuration
+
+## Environment Variables
+
+Frontend variables must be prefixed with `VITE_`:
+- `VITE_SUPABASE_URL` - Supabase project URL
+- `VITE_SUPABASE_ANON_KEY` - Supabase anonymous key
+
+Server variables:
+- `SUPABASE_URL` - Supabase project URL
+- `SUPABASE_SERVICE_KEY` - Supabase service role key
+- `DATABASE_URL` - PostgreSQL connection string
+- `PORT` - Server port (default: 4010)
+
+## Authentication Architecture
+
+The app uses Supabase Auth with:
+- Client-side auth in React (`@supabase/ssr`)
+- Session management in `App.jsx` and `Layout.jsx`
+- Protected routes using React Router
+- Auth state synchronized across components
+
+## Styling and Components
+
+- **CSS Framework**: Tailwind CSS v3 (not v4)
+- **Component Library**: shadcn/ui with customizable primitives
+- **CSS Variables**: Defined in `frontend/src/index.css` for theming
+- **PostCSS**: Standard Tailwind v3 setup with autoprefixer
+
+Important: When working with Tailwind, use v3 syntax:
+- `@tailwind base/components/utilities` (not `@import "tailwindcss"`)
+- Standard PostCSS config with `tailwindcss` and `autoprefixer` plugins
+
+## Local Development URLs
+
+When running locally with Supabase CLI:
+- Frontend: http://localhost:4011
+- Server API: http://localhost:4010  
+- Supabase Studio: http://localhost:54323
+- Supabase API: http://localhost:54321
+- Email Testing (Inbucket): http://localhost:54324
 
 ## Testing
 
-Use `bun test` to run tests.
+Currently no test files in the project. When adding tests:
+- Use `bun test` to run tests
+- Import from `bun:test` for test utilities
+- Place test files as `*.test.ts` or `*.test.tsx`
 
-```ts#index.test.ts
-import { test, expect } from "bun:test";
+## Common Issues and Solutions
 
-test("hello world", () => {
-  expect(1).toBe(1);
-});
-```
+**PostCSS/Tailwind conflicts**: Ensure dependencies are installed in the correct directory (frontend, not root)
 
-## Frontend
+**Port conflicts**: Kill existing processes with `lsof -ti:PORT | xargs kill -9`
 
-Use HTML imports with `Bun.serve()`. Don't use `vite`. HTML imports fully support React, CSS, Tailwind.
+**Vite not processing CSS**: Clear cache with `rm -rf node_modules/.vite`
 
-Server:
-
-```ts#index.ts
-import index from "./index.html"
-
-Bun.serve({
-  routes: {
-    "/": index,
-    "/api/users/:id": {
-      GET: (req) => {
-        return new Response(JSON.stringify({ id: req.params.id }));
-      },
-    },
-  },
-  // optional websocket support
-  websocket: {
-    open: (ws) => {
-      ws.send("Hello, world!");
-    },
-    message: (ws, message) => {
-      ws.send(message);
-    },
-    close: (ws) => {
-      // handle close
-    }
-  },
-  development: {
-    hmr: true,
-    console: true,
-  }
-})
-```
-
-HTML files can import .tsx, .jsx or .js files directly and Bun's bundler will transpile & bundle automatically. `<link>` tags can point to stylesheets and Bun's CSS bundler will bundle.
-
-```html#index.html
-<html>
-  <body>
-    <h1>Hello, world!</h1>
-    <script type="module" src="./frontend.tsx"></script>
-  </body>
-</html>
-```
-
-With the following `frontend.tsx`:
-
-```tsx#frontend.tsx
-import React from "react";
-
-// import .css files directly and it works
-import './index.css';
-
-import { createRoot } from "react-dom/client";
-
-const root = createRoot(document.body);
-
-export default function Frontend() {
-  return <h1>Hello, world!</h1>;
-}
-
-root.render(<Frontend />);
-```
-
-Then, run index.ts
-
-```sh
-bun --hot ./index.ts
-```
-
-For more information, read the Bun API docs in `node_modules/bun-types/docs/**.md`.
+**Module resolution issues**: Check for duplicate node_modules in parent directories
