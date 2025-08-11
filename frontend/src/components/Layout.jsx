@@ -25,13 +25,15 @@ export default function Layout() {
     navigate('/login')
   }
 
-  // Hide header bar on auth pages
-  const authPages = ['/login', '/signup', '/signin', '/forgot-password', '/reset-password', '/auth/callback']
+  // Hide header bar on auth pages and dashboard
+  const authPages = ['/login', '/signup', '/signin', '/forgot-password', '/reset-password', '/auth/callback', '/auth/confirm']
+  const dashboardPages = ['/dashboard', '/calculations', '/templates', '/history', '/projects', '/analytics', '/settings', '/profile']
   const isAuthPage = authPages.includes(location.pathname)
+  const isDashboardPage = dashboardPages.includes(location.pathname)
 
   return (
     <div>
-      {!isAuthPage && (
+      {!isAuthPage && !isDashboardPage && (
         <nav style={{
           background: '#222',
           padding: '15px 30px',

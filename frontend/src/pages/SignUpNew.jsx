@@ -41,7 +41,7 @@ export default function SignUpNew() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/`,
+        redirectTo: `${window.location.origin}/dashboard`,
       },
     })
     if (error) {
@@ -53,7 +53,7 @@ export default function SignUpNew() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'azure',
       options: {
-        redirectTo: `${window.location.origin}/`,
+        redirectTo: `${window.location.origin}/dashboard`,
         scopes: 'email',
       },
     })
@@ -66,7 +66,7 @@ export default function SignUpNew() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'apple',
       options: {
-        redirectTo: `${window.location.origin}/`,
+        redirectTo: `${window.location.origin}/dashboard`,
       },
     })
     if (error) {

@@ -5,7 +5,9 @@ import Layout from './components/Layout'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import SignUpNew from './pages/SignUpNew'
+import Dashboard from './pages/Dashboard'
 import AuthCallback from './pages/AuthCallback'
+import AuthConfirm from './pages/AuthConfirm'
 import DebugAuth from './pages/DebugAuth'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
@@ -44,13 +46,15 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={session ? <Home /> : <Navigate to="/login" />} />
-          <Route path="login" element={!session ? <Login /> : <Navigate to="/" />} />
-          <Route path="signup" element={!session ? <SignUpNew /> : <Navigate to="/" />} />
+          <Route index element={session ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} />
+          <Route path="dashboard" element={session ? <Dashboard /> : <Navigate to="/login" />} />
+          <Route path="login" element={!session ? <Login /> : <Navigate to="/dashboard" />} />
+          <Route path="signup" element={!session ? <SignUpNew /> : <Navigate to="/dashboard" />} />
           <Route path="signin" element={<Navigate to="/login" />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="reset-password" element={<ResetPassword />} />
           <Route path="auth/callback" element={<AuthCallback />} />
+          <Route path="auth/confirm" element={<AuthConfirm />} />
           <Route path="debug-auth" element={<DebugAuth />} />
         </Route>
       </Routes>
