@@ -14,11 +14,17 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useOrganization } from '@/contexts/OrganizationContext'
+import { useEntity } from '@/contexts/EntityContext'
+import { Building2, Users, Calculator, TrendingUp, Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const [session, setSession] = useState<Session | null>(null)
+  const [_session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const { currentOrganization, membership } = useOrganization()
+  const { entities } = useEntity()
 
   useEffect(() => {
     // Check if user is authenticated
@@ -72,41 +78,54 @@ export default function Dashboard() {
           </Breadcrumb>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold">Welcome back!</h1>
+            <p className="text-muted-foreground">
+              {currentOrganization?.name} • {membership?.role}
+            </p>
+          </div>
+
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Active Entities</CardTitle>
+                <Building2 className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{entities.length}</div>
+                <p className="text-xs text-muted-foreground">
+                  {entities.length === 0 ? 'No entities yet' : 'Client businesses'}
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Calculations</CardTitle>
+                <Calculator className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">0</div>
-                <p className="text-xs text-muted-foreground">Start creating calculations</p>
+                <p className="text-xs text-muted-foreground">This month</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Recent Activity</CardTitle>
+                <CardTitle className="text-sm font-medium">Team Members</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">0</div>
-                <p className="text-xs text-muted-foreground">No recent activity</p>
+                <div className="text-2xl font-bold">1</div>
+                <p className="text-xs text-muted-foreground">Active users</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Saved Templates</CardTitle>
+                <CardTitle className="text-sm font-medium">Performance</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">0</div>
-                <p className="text-xs text-muted-foreground">Create your first template</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Profile Status</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">Active</div>
-                <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
+                <div className="text-2xl font-bold">+12%</div>
+                <p className="text-xs text-muted-foreground">From last month</p>
               </CardContent>
             </Card>
           </div>
@@ -114,30 +133,77 @@ export default function Dashboard() {
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>Welcome to Calceum</CardTitle>
-                <CardDescription>Your powerful calculation platform</CardDescription>
+                <CardTitle>Quick Actions</CardTitle>
+                <CardDescription>Manage your organization</CardDescription>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Get started by creating your first calculation or exploring our templates. Calceum
-                  provides advanced calculation tools for all your computational needs.
-                </p>
+              <CardContent className="space-y-2">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={() => navigate('/entities/new')}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add New Entity
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={() => navigate('/entities')}
+                >
+                  <Building2 className="mr-2 h-4 w-4" />
+                  Manage Entities
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={() => navigate('/team')}
+                >
+                  <Users className="mr-2 h-4 w-4" />
+                  Manage Team
+                </Button>
               </CardContent>
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-                <CardDescription>Get started with these common tasks</CardDescription>
+                <CardTitle>Recent Entities</CardTitle>
+                <CardDescription>Your client businesses</CardDescription>
               </CardHeader>
-              <CardContent className="grid gap-2">
-                <button className="text-left text-sm hover:text-primary">
-                  → Create new calculation
-                </button>
-                <button className="text-left text-sm hover:text-primary">→ Browse templates</button>
-                <button className="text-left text-sm hover:text-primary">
-                  → View documentation
-                </button>
-                <button className="text-left text-sm hover:text-primary">→ Account settings</button>
+              <CardContent>
+                {entities.length === 0 ? (
+                  <div className="text-center py-4">
+                    <p className="text-sm text-muted-foreground mb-4">No entities added yet</p>
+                    <Button size="sm" onClick={() => navigate('/entities/new')}>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add First Entity
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {entities.slice(0, 5).map((entity) => (
+                      <div
+                        key={entity.id}
+                        className="flex items-center justify-between p-2 rounded-lg hover:bg-accent cursor-pointer"
+                        onClick={() => navigate(`/entities/${entity.id}`)}
+                      >
+                        <div>
+                          <p className="text-sm font-medium">{entity.name}</p>
+                          <p className="text-xs text-muted-foreground">{entity.entity_type}</p>
+                        </div>
+                        <span className="text-xs text-muted-foreground">{entity.status}</span>
+                      </div>
+                    ))}
+                    {entities.length > 5 && (
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="w-full"
+                        onClick={() => navigate('/entities')}
+                      >
+                        View all {entities.length} entities →
+                      </Button>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

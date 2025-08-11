@@ -11,6 +11,15 @@ import AuthConfirm from './pages/AuthConfirm'
 import DebugAuth from './pages/DebugAuth'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
+import Entities from './pages/Entities'
+import EntityNew from './pages/EntityNew'
+import EntityDetail from './pages/EntityDetail'
+import Settings from './pages/Settings'
+import Profile from './pages/Profile'
+import { OnboardingRouter } from './components/onboarding-router'
+import { OrganizationSetup } from './components/organization-setup'
+import { OrganizationProvider } from './contexts/OrganizationContext'
+import { EntityProvider } from './contexts/EntityContext'
 import './App.css'
 import './index.css'
 
@@ -43,20 +52,56 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={session ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} />
-          <Route path="dashboard" element={session ? <Dashboard /> : <Navigate to="/login" />} />
-          <Route path="login" element={!session ? <Login /> : <Navigate to="/dashboard" />} />
-          <Route path="signup" element={!session ? <SignUpNew /> : <Navigate to="/dashboard" />} />
-          <Route path="signin" element={<Navigate to="/login" />} />
-          <Route path="forgot-password" element={<ForgotPassword />} />
-          <Route path="reset-password" element={<ResetPassword />} />
-          <Route path="auth/callback" element={<AuthCallback />} />
-          <Route path="auth/confirm" element={<AuthConfirm />} />
-          <Route path="debug-auth" element={<DebugAuth />} />
-        </Route>
-      </Routes>
+      <OrganizationProvider>
+        <EntityProvider>
+          <OnboardingRouter>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route
+                  index
+                  element={session ? <Navigate to="/dashboard" /> : <Navigate to="/login" />}
+                />
+                <Route
+                  path="dashboard"
+                  element={session ? <Dashboard /> : <Navigate to="/login" />}
+                />
+                <Route path="login" element={!session ? <Login /> : <Navigate to="/dashboard" />} />
+                <Route
+                  path="signup"
+                  element={!session ? <SignUpNew /> : <Navigate to="/dashboard" />}
+                />
+                <Route path="signin" element={<Navigate to="/login" />} />
+                <Route path="forgot-password" element={<ForgotPassword />} />
+                <Route path="reset-password" element={<ResetPassword />} />
+                <Route path="auth/callback" element={<AuthCallback />} />
+                <Route path="auth/confirm" element={<AuthConfirm />} />
+                <Route path="debug-auth" element={<DebugAuth />} />
+                <Route
+                  path="onboarding"
+                  element={session ? <OrganizationSetup /> : <Navigate to="/login" />}
+                />
+                <Route
+                  path="entities"
+                  element={session ? <Entities /> : <Navigate to="/login" />}
+                />
+                <Route
+                  path="entities/new"
+                  element={session ? <EntityNew /> : <Navigate to="/login" />}
+                />
+                <Route
+                  path="entities/:id"
+                  element={session ? <EntityDetail /> : <Navigate to="/login" />}
+                />
+                <Route
+                  path="settings"
+                  element={session ? <Settings /> : <Navigate to="/login" />}
+                />
+                <Route path="profile" element={session ? <Profile /> : <Navigate to="/login" />} />
+              </Route>
+            </Routes>
+          </OnboardingRouter>
+        </EntityProvider>
+      </OrganizationProvider>
     </BrowserRouter>
   )
 }

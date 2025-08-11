@@ -8,15 +8,16 @@ import {
   Home,
   LogOut,
   Settings,
-  User as UserIcon,
   BarChart,
   Clock,
-  Folder,
+  Building2,
+  Users,
   ChevronsUpDown,
   LucideIcon,
 } from 'lucide-react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Separator } from '@/components/ui/separator'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +27,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { OrganizationSwitcher } from './organization-switcher'
+import { EntitySwitcher } from './entity-switcher'
 import {
   Sidebar,
   SidebarContent,
@@ -53,9 +56,19 @@ const items: MenuItem[] = [
     icon: Home,
   },
   {
+    title: 'Entities',
+    url: '/entities',
+    icon: Building2,
+  },
+  {
     title: 'Calculations',
     url: '/calculations',
     icon: Calculator,
+  },
+  {
+    title: 'Team',
+    url: '/team',
+    icon: Users,
   },
   {
     title: 'Templates',
@@ -66,11 +79,6 @@ const items: MenuItem[] = [
     title: 'History',
     url: '/history',
     icon: Clock,
-  },
-  {
-    title: 'Projects',
-    url: '/projects',
-    icon: Folder,
   },
   {
     title: 'Analytics',
@@ -84,11 +92,6 @@ const bottomItems: MenuItem[] = [
     title: 'Settings',
     url: '/settings',
     icon: Settings,
-  },
-  {
-    title: 'Profile',
-    url: '/profile',
-    icon: UserIcon,
   },
 ]
 
@@ -130,52 +133,12 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                >
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    <img src="/Calceum LOGO 1F_PNG.png" alt="Calceum" className="h-6 w-auto" />
-                  </div>
-                  <div className="flex flex-col gap-0.5 leading-none">
-                    <span className="font-semibold">Calceum</span>
-                    <span className="text-xs text-muted-foreground">Professional</span>
-                  </div>
-                  <ChevronsUpDown className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-[--radix-dropdown-menu-trigger-width]"
-                align="start"
-              >
-                <DropdownMenuLabel className="text-xs text-muted-foreground">
-                  Organizations
-                </DropdownMenuLabel>
-                <DropdownMenuItem>
-                  <div className="flex items-center gap-2">
-                    <div className="flex size-6 items-center justify-center rounded-sm bg-primary text-primary-foreground">
-                      C
-                    </div>
-                    <span>Calceum Pro</span>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <div className="flex items-center gap-2">
-                    <div className="flex size-6 items-center justify-center rounded-sm border">
-                      +
-                    </div>
-                    <span>Add organization</span>
-                  </div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <OrganizationSwitcher />
+        <Separator className="my-2" />
+        <div className="px-2">
+          <div className="text-xs text-muted-foreground mb-2">Client Entity</div>
+          <EntitySwitcher />
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -195,8 +158,8 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel>Account</SidebarGroupLabel>
+        <SidebarGroup className="mt-auto">
+          <SidebarGroupLabel>Organization</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {bottomItems.map((item) => (
@@ -261,10 +224,6 @@ export function AppSidebar() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={() => navigate('/profile')}>
-                    <UserIcon className="mr-2 h-4 w-4" />
-                    Profile
-                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/settings')}>
                     <Settings className="mr-2 h-4 w-4" />
                     Settings
