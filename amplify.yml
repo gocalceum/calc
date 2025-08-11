@@ -81,14 +81,3 @@ applications:
           - ~/.bun/install/cache/**/*
           
     appRoot: .
-    
-  # Environment-specific settings
-  environment:
-    variables:
-      _LIVE_UPDATES:
-        - name: AMPLIFY_MONOREPO_APP_ROOT
-          value: frontend
-        - name: AMPLIFY_DIFF_DEPLOY
-          value: false
-        - name: AMPLIFY_ENABLE_BRANCH_DESTROY
-          value: true
