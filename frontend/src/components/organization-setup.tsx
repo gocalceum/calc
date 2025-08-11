@@ -79,7 +79,7 @@ export function OrganizationSetup() {
       navigate('/dashboard')
     } catch (err) {
       console.error('Error creating organization:', err)
-      setError(err.message || 'Failed to create organization')
+      setError(err instanceof Error ? err.message : 'Failed to create organization')
     } finally {
       setIsLoading(false)
     }

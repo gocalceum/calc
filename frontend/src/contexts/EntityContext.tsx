@@ -138,7 +138,7 @@ export function EntityProvider({ children }: { children: React.ReactNode }) {
           ...data,
           organization_id: currentOrganization.id,
           created_by: user.id,
-        })
+        } as any)
         .select()
         .single()
 

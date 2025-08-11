@@ -51,7 +51,9 @@ export function OrganizationProvider({ children }: { children: React.ReactNode }
       // Now get the organizations separately
       let orgs: Organization[] = []
       if (memberships && memberships.length > 0) {
-        const orgIds = memberships.map((m) => m.organization_id).filter(Boolean)
+        const orgIds = memberships
+          .map((m) => m.organization_id)
+          .filter((id): id is string => id !== null)
         const { data: organizationsData, error: orgsError } = await supabase
           .from('organizations')
           .select('*')

@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { ChevronsUpDown, Plus, Building2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useOrganization } from '@/contexts/OrganizationContext'
@@ -66,7 +65,7 @@ export function OrganizationSwitcher() {
                   {currentOrganization?.name || 'Select Organization'}
                 </span>
                 <span className="truncate text-xs">
-                  {currentOrganization?.organization_type || 'Organization'}
+                  {currentOrganization?.type || 'Organization'}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto" />

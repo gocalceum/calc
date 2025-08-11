@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/supabaseClient'
-import { Tables } from '@/lib/database.types'
+// import { Tables } from '@/lib/database.types'
 import { AppSidebar } from '@/components/app-sidebar'
 import {
   Breadcrumb,
@@ -17,12 +17,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Edit, Trash2, MapPin, Phone, Mail, Globe } from 'lucide-react'
 
-type Entity = Tables<'entities'>
+// type Entity = Tables<'entities'>
 
 export default function EntityDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [entity, setEntity] = useState<Entity | null>(null)
+  const [entity, setEntity] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -187,7 +187,9 @@ export default function EntityDetail() {
                 {entity.address && (
                   <div className="flex items-start gap-2">
                     <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                    <p className="whitespace-pre-wrap">{entity.address}</p>
+                    <p className="whitespace-pre-wrap">
+                      {JSON.stringify(entity.registered_address, null, 2)}
+                    </p>
                   </div>
                 )}
               </CardContent>

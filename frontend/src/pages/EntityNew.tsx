@@ -97,7 +97,7 @@ export default function EntityNew() {
       navigate(`/entities/${newEntity.id}`)
     } catch (err) {
       console.error('Error creating entity:', err)
-      setError(err.message || 'Failed to create entity')
+      setError(err instanceof Error ? err.message : 'Failed to create entity')
     } finally {
       setIsLoading(false)
     }
