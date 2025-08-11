@@ -10,8 +10,8 @@ applications:
             - export PATH="$BUN_INSTALL/bin:$PATH"
             - bun --version
             
-            # Install AWS CLI and jq for secret management
-            - yum install -y aws-cli jq || apt-get update && apt-get install -y awscli jq
+            # Install jq for JSON parsing (AWS CLI is pre-installed)
+            - which jq || curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o /tmp/jq && chmod +x /tmp/jq && export PATH="/tmp:$PATH"
             
             # Fetch secrets based on branch
             - |
