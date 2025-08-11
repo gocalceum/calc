@@ -19,25 +19,29 @@ applications:
               if [ "$AWS_BRANCH" = "main" ]; then
                 echo "Fetching production secrets from AWS Secrets Manager..."
                 
-                # Check if we should use calceum/supabase or create it
-                SECRET_EXISTS=$(aws secretsmanager describe-secret --secret-id calceum/supabase --region eu-west-2 2>/dev/null || echo "not_found")
+                # Debug: Check AWS credentials
+                echo "Checking AWS credentials..."
+                aws sts get-caller-identity
                 
-                if [ "$SECRET_EXISTS" = "not_found" ]; then
-                  echo "Note: calceum/supabase secret not found. Using environment variables from Amplify console."
-                  # Fall back to Amplify environment variables
+                # Try to fetch secrets from AWS Secrets Manager
+                echo "Attempting to fetch calceum/supabase secret..."
+                SECRETS=$(aws secretsmanager get-secret-value --secret-id calceum/supabase --region eu-west-2 --query SecretString --output text 2>&1)
+                
+                if echo "$SECRETS" | grep -q "AccessDeniedException\|ResourceNotFoundException"; then
+                  echo "Warning: Could not fetch secret from Secrets Manager: $SECRETS"
+                  echo "Using environment variables from Amplify console..."
                   export VITE_SUPABASE_URL=${SUPABASE_URL}
                   export VITE_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
                 else
-                  # Fetch from Secrets Manager
-                  SECRETS=$(aws secretsmanager get-secret-value --secret-id calceum/supabase --region eu-west-2 --query SecretString --output text)
-                  export VITE_SUPABASE_URL=$(echo $SECRETS | jq -r .supabase_url)
-                  export VITE_SUPABASE_ANON_KEY=$(echo $SECRETS | jq -r .supabase_anon_key)
+                  echo "Successfully fetched secrets from AWS Secrets Manager"
+                  export VITE_SUPABASE_URL=$(echo "$SECRETS" | jq -r .supabase_url)
+                  export VITE_SUPABASE_ANON_KEY=$(echo "$SECRETS" | jq -r .supabase_anon_key)
                 fi
                 
-                # Fetch OAuth secrets if they exist
-                OAUTH_SECRET=$(aws secretsmanager get-secret-value --secret-id calceum/oauth/google --region eu-west-2 --query SecretString --output text 2>/dev/null || echo "{}")
-                if [ "$OAUTH_SECRET" != "{}" ]; then
-                  export VITE_GOOGLE_CLIENT_ID=$(echo $OAUTH_SECRET | jq -r .client_id // empty)
+                # Fetch OAuth secrets if they exist (optional)
+                OAUTH_SECRET=$(aws secretsmanager get-secret-value --secret-id calceum/oauth/google --region eu-west-2 --query SecretString --output text 2>/dev/null || echo "")
+                if [ ! -z "$OAUTH_SECRET" ] && [ "$OAUTH_SECRET" != "" ]; then
+                  export VITE_GOOGLE_CLIENT_ID=$(echo "$OAUTH_SECRET" | jq -r '.client_id // ""')
                 fi
                 
                 # Set production environment
