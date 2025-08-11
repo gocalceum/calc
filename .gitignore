@@ -47,4 +47,10 @@ Thumbs.db
 
 # Package manager
 bun.lockb
-EOF < /dev/null
+
+# Apple JWT secrets
+apple-jwt-*.txt
+generate-apple-jwt*.js
+
+# Test files
+test-oauth.js
