@@ -3,12 +3,12 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun --env-file=../.env --watch index.ts",
+    "dev": "bun --env-file=../.env.local --watch index.ts",
+    "dev:prod": "bun --env-file=../.env --watch index.ts",
     "start": "bun --env-file=../.env index.ts"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.54.0",
-    "resend": "^6.0.1"
+    "@supabase/supabase-js": "^2.54.0"
   },
   "devDependencies": {
     "@types/bun": "latest"

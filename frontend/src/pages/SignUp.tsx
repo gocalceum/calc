@@ -1,24 +1,25 @@
-import { useState } from 'react'
+import { useState, FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '@/supabaseClient'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import type { Provider } from '@supabase/supabase-js'
 
-export default function SignUpNew() {
+export default function SignUp() {
   const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
     setError(null)
     setLoading(true)
 
-    const formData = new FormData(e.target)
-    const email = formData.get('email')
-    const password = formData.get('password')
+    const formData = new FormData(e.currentTarget)
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -36,11 +37,12 @@ export default function SignUpNew() {
     }
   }
 
-  const handleGoogleSignIn = async () => {
+  const handleOAuthSignIn = async (provider: Provider, scopes?: string): Promise<void> => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider,
       options: {
         redirectTo: `${window.location.origin}/dashboard`,
+        ...(scopes && { scopes }),
       },
     })
     if (error) {
@@ -48,29 +50,16 @@ export default function SignUpNew() {
     }
   }
 
-  const handleMicrosoftSignIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'azure',
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`,
-        scopes: 'email',
-      },
-    })
-    if (error) {
-      setError(error.message)
-    }
+  const handleGoogleSignIn = async (): Promise<void> => {
+    await handleOAuthSignIn('google')
   }
 
-  const handleAppleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'apple',
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`,
-      },
-    })
-    if (error) {
-      setError(error.message)
-    }
+  const handleMicrosoftSignIn = async (): Promise<void> => {
+    await handleOAuthSignIn('azure', 'email')
+  }
+
+  const handleAppleSignIn = async (): Promise<void> => {
+    await handleOAuthSignIn('apple')
   }
 
   const searchParams = new URLSearchParams(window.location.search)
@@ -88,7 +77,7 @@ export default function SignUpNew() {
                 className="mx-auto mb-4 h-12 w-auto"
               />
               <CardTitle className="text-2xl">Check Your Email</CardTitle>
-              <CardDescription>We've sent you a confirmation link</CardDescription>
+              <CardDescription>We&apos;ve sent you a confirmation link</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">

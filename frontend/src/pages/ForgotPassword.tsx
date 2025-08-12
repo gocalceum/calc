@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/supabaseClient'
 import { Button } from '@/components/ui/button'
@@ -8,17 +8,17 @@ import { Label } from '@/components/ui/label'
 import { ArrowLeft } from 'lucide-react'
 
 export default function ForgotPassword() {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [success, setSuccess] = useState(false)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<boolean>(false)
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
     setError(null)
     setLoading(true)
 
-    const formData = new FormData(e.target)
-    const email = formData.get('email')
+    const formData = new FormData(e.currentTarget)
+    const email = formData.get('email') as string
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
@@ -46,14 +46,14 @@ export default function ForgotPassword() {
               />
               <CardTitle className="text-2xl">Check your email</CardTitle>
               <CardDescription>
-                We've sent you a password reset link. Please check your email to continue.
+                We&apos;ve sent you a password reset link. Please check your email to continue.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  Didn't receive the email? Check your spam folder, or try again with a different
-                  email address.
+                  Didn&apos;t receive the email? Check your spam folder, or try again with a
+                  different email address.
                 </p>
                 <Button variant="outline" className="w-full" onClick={() => setSuccess(false)}>
                   Try again
@@ -87,7 +87,7 @@ export default function ForgotPassword() {
               />
               <CardTitle className="text-2xl">Forgot password?</CardTitle>
               <CardDescription>
-                Enter your email address and we'll send you a link to reset your password
+                Enter your email address and we&apos;ll send you a link to reset your password
               </CardDescription>
             </CardHeader>
             <CardContent>

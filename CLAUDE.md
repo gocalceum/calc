@@ -13,10 +13,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Essential Commands
 
 ```bash
-# Development
-bun run dev                    # Start both frontend (4011) and backend (4010)
-cd frontend && bun run dev     # Frontend only
-cd server && bun run dev       # Backend only
+# LOCAL DEVELOPMENT (uses .env.local → local Supabase)
+supabase start                 # Start local Supabase first
+cd frontend && VITE_SUPABASE_URL=http://localhost:54321 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0 bun run dev
+cd server && bun run dev       # Backend local (uses .env.local)
+
+# PRODUCTION TESTING (uses .env → production Supabase)
+cd frontend && bun run dev     # Frontend prod mode
+cd server && bun run dev:prod  # Backend prod mode
 
 # Quality Checks
 cd frontend && bun run lint    # ESLint
@@ -31,9 +35,10 @@ supabase migration new <name>  # Create new migration
 supabase db reset              # Reset local DB with migrations
 SUPABASE_ACCESS_TOKEN=$SUPABASE_SERVICE_KEY supabase db push --password "$SUPABASE_DB_PASSWORD"  # Push to production
 
-# Local Supabase (requires Docker)
-bun run supabase:start         # Start local Supabase
-bun run supabase:stop          # Stop local Supabase
+# Local Supabase Management
+supabase start                 # Start local Supabase
+supabase stop                  # Stop local Supabase
+supabase status                # Check local Supabase status
 ```
 
 ## Architecture Overview
@@ -76,13 +81,36 @@ Key tables with RLS enabled:
 
 ## Environment Variables
 
-Frontend (must prefix with `VITE_`):
+### Environment Files Structure
+- **`.env`** - Production configuration (Supabase Cloud)
+- **`.env.local`** - Local development (Local Supabase on Docker)
+- **`.env.example`** - Template for new developers
+
+### Local Development (.env.local)
 ```
-VITE_SUPABASE_URL=https://[project].supabase.co
-VITE_SUPABASE_ANON_KEY=[anon_key]
+# Frontend (Vite requires VITE_ prefix)
+VITE_SUPABASE_URL=http://localhost:54321
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# Backend
+SUPABASE_URL=http://localhost:54321
+SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+DATABASE_URL=postgresql://postgres:postgres@localhost:54322/postgres
 ```
 
-CI/CD (GitHub Secrets):
+### Production (.env)
+```
+# Frontend
+VITE_SUPABASE_URL=https://[project].supabase.co
+VITE_SUPABASE_ANON_KEY=[anon_key]
+
+# Backend
+SUPABASE_URL=https://[project].supabase.co
+SUPABASE_SERVICE_KEY=[service_key]
+DATABASE_URL=postgresql://postgres.[project]:[password]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
+```
+
+### CI/CD (GitHub Secrets)
 ```
 SUPABASE_ACCESS_TOKEN    # Service role token
 SUPABASE_DB_PASSWORD     # Database password

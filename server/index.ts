@@ -1,15 +1,9 @@
 import { createClient } from '@supabase/supabase-js'
-import { Resend } from 'resend'
 
 const PORT = process.env.PORT || 4010
 
 const supabaseUrl = process.env.SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY!
-const resendApiKey = process.env.RESEND_API_KEY
-const resendFromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
-
-// Initialize Resend client if API key is provided
-const resend = resendApiKey ? new Resend(resendApiKey) : null
 
 // Create Supabase client with service key for server-side operations
 const supabase = createClient(supabaseUrl, supabaseServiceKey, {
@@ -39,7 +33,7 @@ const server = Bun.serve({
     
     // Health check
     if (url.pathname === '/') {
-      return new Response('Calc Server API - Using Supabase Native Features', {
+      return new Response('Calc Server API', {
         headers: { 'Content-Type': 'text/plain' }
       })
     }
@@ -175,75 +169,10 @@ const server = Bun.serve({
       }, { headers })
     }
     
-    // Send email using Resend
-    if (url.pathname === '/api/email/send' && req.method === 'POST') {
-      if (!resend) {
-        return Response.json({ 
-          error: 'Email service not configured. Please set RESEND_API_KEY in environment variables.' 
-        }, { status: 503, headers })
-      }
-      
-      const authHeader = req.headers.get('Authorization')
-      if (!authHeader) {
-        return Response.json({ error: 'No authorization header' }, { status: 401, headers })
-      }
-      
-      try {
-        const token = authHeader.replace('Bearer ', '')
-        const { data: { user }, error } = await supabase.auth.getUser(token)
-        
-        if (error || !user) {
-          return Response.json({ error: 'Invalid token' }, { status: 401, headers })
-        }
-        
-        const body = await req.json()
-        const { to, subject, html, text } = body
-        
-        if (!to || !subject || (!html && !text)) {
-          return Response.json({ 
-            error: 'Missing required fields: to, subject, and either html or text' 
-          }, { status: 400, headers })
-        }
-        
-        const { data, error: sendError } = await resend.emails.send({
-          from: resendFromEmail,
-          to: [to],
-          subject,
-          html: html || undefined,
-          text: text || undefined,
-        })
-        
-        if (sendError) {
-          return Response.json({ error: sendError.message }, { status: 400, headers })
-        }
-        
-        return Response.json({ 
-          success: true,
-          emailId: data?.id,
-          message: 'Email sent successfully'
-        }, { headers })
-      } catch (error) {
-        console.error('Error sending email:', error)
-        return Response.json({ error: 'Failed to send email' }, { status: 500, headers })
-      }
-    }
-    
-    // Test Resend configuration
-    if (url.pathname === '/api/email/test' && req.method === 'GET') {
-      return Response.json({
-        configured: !!resend,
-        fromEmail: resendFromEmail,
-        message: resend 
-          ? 'Resend is configured and ready to send emails' 
-          : 'Resend is not configured. Please add RESEND_API_KEY to your environment variables.'
-      }, { headers })
-    }
     
     return Response.json({ error: 'Not Found' }, { status: 404, headers })
   }
 })
 
 console.log(`🚀 Server running at http://localhost:${server.port}`)
-console.log(`📦 Using Supabase Native Features`)
 console.log(`🔗 Connected to: ${supabaseUrl}`)
-console.log(`📧 Resend: ${resend ? 'Configured' : 'Not configured (set RESEND_API_KEY)'}`)

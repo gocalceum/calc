@@ -1,29 +1,38 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, FormEvent, ChangeEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/supabaseClient'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
 
 export default function ResetPassword() {
   const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
+  const [password, setPassword] = useState<string>('')
+  const [confirmPassword, setConfirmPassword] = useState<string>('')
 
   useEffect(() => {
     // Check if we have a valid session from the reset link
-    supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        // User clicked the reset link and is ready to update password
-        console.log('Password recovery mode')
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(
+      async (event: AuthChangeEvent, _session: Session | null) => {
+        if (event === 'PASSWORD_RECOVERY') {
+          // User clicked the reset link and is ready to update password
+          console.log('Password recovery mode')
+        }
       }
-    })
+    )
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
     setError(null)
 
@@ -56,6 +65,14 @@ export default function ResetPassword() {
     }
   }
 
+  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setPassword(e.target.value)
+  }
+
+  const handleConfirmPasswordChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setConfirmPassword(e.target.value)
+  }
+
   return (
     <div className="flex min-h-screen w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
@@ -79,7 +96,7 @@ export default function ResetPassword() {
                       id="password"
                       type="password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={handlePasswordChange}
                       placeholder="Enter new password"
                       required
                       autoFocus
@@ -92,7 +109,7 @@ export default function ResetPassword() {
                       id="confirmPassword"
                       type="password"
                       value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      onChange={handleConfirmPasswordChange}
                       placeholder="Confirm new password"
                       required
                       minLength={6}

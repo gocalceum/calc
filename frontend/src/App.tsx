@@ -4,7 +4,7 @@ import { supabase } from '@/supabaseClient'
 import { Session } from '@supabase/supabase-js'
 import Layout from './components/Layout'
 import Login from './pages/Login'
-import SignUpNew from './pages/SignUpNew'
+import SignUp from './pages/SignUp'
 import Dashboard from './pages/Dashboard'
 import AuthCallback from './pages/AuthCallback'
 import AuthConfirm from './pages/AuthConfirm'
@@ -68,7 +68,7 @@ function App() {
                 <Route path="login" element={!session ? <Login /> : <Navigate to="/dashboard" />} />
                 <Route
                   path="signup"
-                  element={!session ? <SignUpNew /> : <Navigate to="/dashboard" />}
+                  element={!session ? <SignUp /> : <Navigate to="/dashboard" />}
                 />
                 <Route path="signin" element={<Navigate to="/login" />} />
                 <Route path="forgot-password" element={<ForgotPassword />} />

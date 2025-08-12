@@ -1,10 +1,16 @@
 import { supabase } from '@/supabaseClient'
+import type { Provider } from '@supabase/supabase-js'
+
+interface OAuthTestResult {
+  data: any
+  error: any
+}
 
 export default function DebugAuth() {
   // Get the actual Supabase URL being used
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 
-  const testOAuth = async (provider) => {
+  const testOAuth = async (provider: Provider): Promise<OAuthTestResult> => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
