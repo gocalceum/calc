@@ -101,11 +101,33 @@ AWS_SECRET_ACCESS_KEY    # For Amplify deployment
 ### CI/CD Workflows
 1. **`.github/workflows/ci-cd.yml`**: 
    - PR checks: TypeScript, ESLint, build verification
-   - Main branch: Triggers Amplify deployment
+   - Main branch: Monitors Amplify webhook deployment
+   - Runs TypeScript smoke tests post-deployment
 
 2. **`.github/workflows/database-migration.yml`**:
    - Auto-applies migrations when pushed to main
    - Syncs database schema with code deployments
+
+### Monitoring GitHub Actions After Push
+**IMPORTANT**: After every push to main, monitor the CI/CD pipeline:
+```bash
+# Watch the latest workflow run
+gh run watch
+
+# Check workflow status
+gh run list --workflow=ci-cd.yml --limit=1
+
+# View failed steps if any
+gh run view --log-failed
+
+# Check Amplify deployment directly
+aws amplify list-jobs --app-id d21tj2auyhfczb --branch-name main --max-items 3
+```
+
+The pipeline should complete all steps:
+1. ✅ Code Quality checks (TypeScript, ESLint, Prettier)
+2. ✅ Deploy to Production (monitors Amplify webhook)
+3. ✅ Smoke Tests (TypeScript tests against production)
 
 ### Production URLs
 - App: https://app.calceum.com
