@@ -75,14 +75,25 @@ jobs:
         run: |
           # Get the latest deployment job (triggered by webhook)
           echo "Waiting for Amplify webhook deployment to start..."
-          sleep 10
+          sleep 15
           
           DEPLOYMENT_ID=$(aws amplify list-jobs \
             --app-id ${{ steps.amplify.outputs.app_id }} \
             --branch-name main \
             --max-items 1 \
             --query 'jobSummaries[0].jobId' \
-            --output text)
+            --output text 2>/dev/null || echo "")
+          
+          if [ -z "$DEPLOYMENT_ID" ] || [ "$DEPLOYMENT_ID" = "None" ]; then
+            echo "No deployment found yet, checking again..."
+            sleep 10
+            DEPLOYMENT_ID=$(aws amplify list-jobs \
+              --app-id ${{ steps.amplify.outputs.app_id }} \
+              --branch-name main \
+              --max-items 1 \
+              --query 'jobSummaries[0].jobId' \
+              --output text)
+          fi
           
           echo "Found deployment: $DEPLOYMENT_ID"
           echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_ENV
