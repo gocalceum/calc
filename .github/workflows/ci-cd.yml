@@ -77,14 +77,15 @@ jobs:
           echo "Waiting for Amplify webhook deployment to start..."
           sleep 15
           
+          # Get just the job ID, nothing else
           DEPLOYMENT_ID=$(aws amplify list-jobs \
             --app-id ${{ steps.amplify.outputs.app_id }} \
             --branch-name main \
             --max-items 1 \
             --query 'jobSummaries[0].jobId' \
-            --output text 2>/dev/null || echo "")
+            --output text | tr -d '\n' | grep -o '^[0-9]*')
           
-          if [ -z "$DEPLOYMENT_ID" ] || [ "$DEPLOYMENT_ID" = "None" ]; then
+          if [ -z "$DEPLOYMENT_ID" ]; then
             echo "No deployment found yet, checking again..."
             sleep 10
             DEPLOYMENT_ID=$(aws amplify list-jobs \
@@ -92,7 +93,7 @@ jobs:
               --branch-name main \
               --max-items 1 \
               --query 'jobSummaries[0].jobId' \
-              --output text)
+              --output text | tr -d '\n' | grep -o '^[0-9]*')
           fi
           
           echo "Found deployment: $DEPLOYMENT_ID"
