@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
@@ -42,10 +42,11 @@
     "react-router-dom": "7",
     "resend": "^6.0.1",
     "tailwind-merge": "^3.3.1",
-    "vite": "^7.1.1"
+    "vite": "^5.4.11"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@vitejs/plugin-react": "^4.3.4",
     "@types/node": "^24.2.1",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
