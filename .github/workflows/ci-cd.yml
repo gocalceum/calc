@@ -71,16 +71,20 @@ jobs:
         run: |
           echo "app_id=${{ secrets.AMPLIFY_APP_ID }}" >> $GITHUB_OUTPUT
       
-      - name: Trigger Amplify deployment
+      - name: Get latest Amplify deployment
         run: |
-          # Start deployment
-          DEPLOYMENT_ID=$(aws amplify start-deployment \
+          # Get the latest deployment job (triggered by webhook)
+          echo "Waiting for Amplify webhook deployment to start..."
+          sleep 10
+          
+          DEPLOYMENT_ID=$(aws amplify list-jobs \
             --app-id ${{ steps.amplify.outputs.app_id }} \
             --branch-name main \
-            --query 'jobSummary.jobId' \
+            --max-items 1 \
+            --query 'jobSummaries[0].jobId' \
             --output text)
           
-          echo "Started deployment: $DEPLOYMENT_ID"
+          echo "Found deployment: $DEPLOYMENT_ID"
           echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_ENV
       
       - name: Wait for deployment
