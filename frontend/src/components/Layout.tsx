@@ -13,7 +13,9 @@ export default function Layout() {
       setSession(session)
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
     })
 
@@ -26,33 +28,55 @@ export default function Layout() {
   }
 
   // Hide header bar on auth pages and dashboard
-  const authPages = ['/login', '/signup', '/signin', '/forgot-password', '/reset-password', '/auth/callback', '/auth/confirm']
-  const dashboardPages = ['/dashboard', '/calculations', '/templates', '/history', '/projects', '/analytics', '/settings', '/profile']
+  const authPages = [
+    '/login',
+    '/signup',
+    '/signin',
+    '/forgot-password',
+    '/reset-password',
+    '/auth/callback',
+    '/auth/confirm',
+  ]
+  const dashboardPages = [
+    '/dashboard',
+    '/calculations',
+    '/templates',
+    '/history',
+    '/projects',
+    '/analytics',
+    '/settings',
+    '/profile',
+  ]
   const isAuthPage = authPages.includes(location.pathname)
   const isDashboardPage = dashboardPages.includes(location.pathname)
 
   return (
     <div>
       {!isAuthPage && !isDashboardPage && (
-        <nav style={{
-          background: '#222',
-          padding: '15px 30px',
-          borderBottom: '1px solid #333',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
+        <nav
+          style={{
+            background: '#222',
+            padding: '15px 30px',
+            borderBottom: '1px solid #333',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
           <div>
-            <Link to="/" style={{ 
-              color: '#24b47e', 
-              fontSize: '20px', 
-              fontWeight: 'bold',
-              textDecoration: 'none' 
-            }}>
+            <Link
+              to="/"
+              style={{
+                color: '#24b47e',
+                fontSize: '20px',
+                fontWeight: 'bold',
+                textDecoration: 'none',
+              }}
+            >
               Calceum
             </Link>
           </div>
-          
+
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
             {session ? (
               <>
@@ -69,7 +93,7 @@ export default function Layout() {
                     color: '#fff',
                     padding: '5px 15px',
                     borderRadius: '4px',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
                   }}
                 >
                   Sign Out
@@ -80,14 +104,14 @@ export default function Layout() {
                 <Link to="/login" style={{ color: '#fff', textDecoration: 'none' }}>
                   Login
                 </Link>
-                <Link 
-                  to="/signup" 
-                  style={{ 
-                    color: '#24b47e', 
+                <Link
+                  to="/signup"
+                  style={{
+                    color: '#24b47e',
                     textDecoration: 'none',
                     border: '1px solid #24b47e',
                     padding: '5px 15px',
-                    borderRadius: '4px'
+                    borderRadius: '4px',
                   }}
                 >
                   Sign Up
@@ -97,7 +121,7 @@ export default function Layout() {
           </div>
         </nav>
       )}
-      
+
       <main>
         <Outlet />
       </main>

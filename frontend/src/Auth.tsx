@@ -13,7 +13,7 @@ export default function Auth() {
 
   const handleSignInWithPassword = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     setLoading(true)
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -28,7 +28,7 @@ export default function Auth() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     setLoading(true)
     const { error } = await supabase.auth.signUp({
       email,
@@ -61,7 +61,7 @@ export default function Auth() {
     <div className="row flex-center flex">
       <div className="col-6 form-widget" aria-live="polite">
         <h1 className="header">Supabase + React</h1>
-        
+
         <div className="auth-mode-selector" style={{ marginBottom: '20px' }}>
           <button
             type="button"
@@ -85,7 +85,10 @@ export default function Auth() {
             <p className="description">
               {isSignUp ? 'Create a new account' : 'Sign in with your email and password'}
             </p>
-            <form className="form-widget" onSubmit={isSignUp ? handleSignUp : handleSignInWithPassword}>
+            <form
+              className="form-widget"
+              onSubmit={isSignUp ? handleSignUp : handleSignInWithPassword}
+            >
               <div>
                 <label htmlFor="email">Email</label>
                 <input
@@ -112,7 +115,11 @@ export default function Auth() {
               </div>
               <div>
                 <button className="button block primary" aria-live="polite" disabled={loading}>
-                  {loading ? <span>Loading...</span> : <span>{isSignUp ? 'Sign Up' : 'Sign In'}</span>}
+                  {loading ? (
+                    <span>Loading...</span>
+                  ) : (
+                    <span>{isSignUp ? 'Sign Up' : 'Sign In'}</span>
+                  )}
                 </button>
               </div>
               <div style={{ marginTop: '10px', textAlign: 'center' }}>
@@ -120,7 +127,13 @@ export default function Auth() {
                   type="button"
                   className="button link"
                   onClick={() => setIsSignUp(!isSignUp)}
-                  style={{ background: 'none', border: 'none', color: '#0ea5e9', cursor: 'pointer', textDecoration: 'underline' }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#0ea5e9',
+                    cursor: 'pointer',
+                    textDecoration: 'underline',
+                  }}
                 >
                   {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
                 </button>
@@ -153,10 +166,19 @@ export default function Auth() {
         )}
 
         {authMode === 'password' && (
-          <div style={{ marginTop: '20px', padding: '10px', background: '#f3f4f6', borderRadius: '4px' }}>
+          <div
+            style={{
+              marginTop: '20px',
+              padding: '10px',
+              background: '#f3f4f6',
+              borderRadius: '4px',
+            }}
+          >
             <p style={{ margin: 0, fontSize: '14px' }}>
-              <strong>Test Account:</strong><br />
-              Email: test@example.com<br />
+              <strong>Test Account:</strong>
+              <br />
+              Email: test@example.com
+              <br />
               Password: test123456
             </p>
           </div>

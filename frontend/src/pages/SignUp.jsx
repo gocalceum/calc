@@ -16,7 +16,9 @@ export default function SignUp() {
     })
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
         navigate('/')
       }
@@ -35,7 +37,7 @@ export default function SignUp() {
         <h1 className="header" style={{ textAlign: 'center', marginBottom: '30px' }}>
           Create Your Account
         </h1>
-        
+
         <Auth
           supabaseClient={supabase}
           appearance={{
@@ -50,7 +52,7 @@ export default function SignUp() {
                   inputBorder: '#333',
                   inputBorderFocus: '#24b47e',
                   inputBorderHover: '#444',
-                }
+                },
               },
             },
             className: {

@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/supabaseClient'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { ArrowLeft } from 'lucide-react'
 
 export default function ForgotPassword() {
@@ -39,9 +39,9 @@ export default function ForgotPassword() {
         <div className="w-full max-w-sm">
           <Card>
             <CardHeader className="text-center">
-              <img 
-                src="/Calceum LOGO 1F_PNG.png" 
-                alt="Calceum Logo" 
+              <img
+                src="/Calceum LOGO 1F_PNG.png"
+                alt="Calceum Logo"
                 className="mx-auto mb-4 h-12 w-auto"
               />
               <CardTitle className="text-2xl">Check your email</CardTitle>
@@ -52,17 +52,17 @@ export default function ForgotPassword() {
             <CardContent>
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  Didn't receive the email? Check your spam folder, or try again with a different email address.
+                  Didn't receive the email? Check your spam folder, or try again with a different
+                  email address.
                 </p>
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => setSuccess(false)}
-                >
+                <Button variant="outline" className="w-full" onClick={() => setSuccess(false)}>
                   Try again
                 </Button>
                 <div className="text-center">
-                  <Link to="/login" className="text-sm underline underline-offset-4 hover:text-primary">
+                  <Link
+                    to="/login"
+                    className="text-sm underline underline-offset-4 hover:text-primary"
+                  >
                     Back to login
                   </Link>
                 </div>
@@ -80,9 +80,9 @@ export default function ForgotPassword() {
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader className="text-center">
-              <img 
-                src="/Calceum LOGO 1F_PNG.png" 
-                alt="Calceum Logo" 
+              <img
+                src="/Calceum LOGO 1F_PNG.png"
+                alt="Calceum Logo"
                 className="mx-auto mb-4 h-12 w-auto"
               />
               <CardTitle className="text-2xl">Forgot password?</CardTitle>
@@ -109,7 +109,7 @@ export default function ForgotPassword() {
                     {loading ? 'Sending reset link...' : 'Send reset link'}
                   </Button>
                 </div>
-                
+
                 <div className="mt-6 text-center text-sm">
                   <Link to="/login" className="inline-flex items-center gap-1 hover:underline">
                     <ArrowLeft className="h-3 w-3" />

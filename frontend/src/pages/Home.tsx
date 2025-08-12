@@ -22,7 +22,9 @@ export default function Home() {
       }
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       if (!session) {
         navigate('/login')
@@ -104,12 +106,7 @@ export default function Home() {
           <form onSubmit={updateProfile} className="form-widget">
             <div>
               <label htmlFor="email">Email</label>
-              <input 
-                id="email" 
-                type="text" 
-                value={session?.user?.email} 
-                disabled 
-              />
+              <input id="email" type="text" value={session?.user?.email} disabled />
             </div>
             <div>
               <label htmlFor="username">Name</label>
@@ -133,20 +130,13 @@ export default function Home() {
             </div>
 
             <div>
-              <button
-                className="button primary block"
-                disabled={loading}
-              >
+              <button className="button primary block" disabled={loading}>
                 {loading ? 'Loading ...' : 'Update Profile'}
               </button>
             </div>
 
             <div style={{ marginTop: '20px' }}>
-              <button
-                className="button block"
-                onClick={handleSignOut}
-                type="button"
-              >
+              <button className="button block" onClick={handleSignOut} type="button">
                 Sign Out
               </button>
             </div>

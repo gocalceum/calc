@@ -2,124 +2,161 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Tech Stack and Tools
+## Tech Stack
 
-**Package Manager**: Always use Bun, not npm/yarn/pnpm
-- `bun install` instead of `npm install`
-- `bun run <script>` instead of `npm run <script>`
-- `bun test` for running tests
-- Bun automatically loads .env files
-
-**Frontend**: Vite + React + Tailwind CSS v3 + shadcn/ui
-- Located in `/frontend` directory
-- Uses Vite dev server on port 4011
-- React Router v7 for routing
-- shadcn/ui components with Radix UI primitives
-- Tailwind CSS v3 (not v4) for styling
-
-**Backend**: Bun server (TypeScript)
-- Located in `/server` directory
-- Runs on port 4010
-- Uses native Bun APIs for server functionality
-
-**Database & Auth**: Supabase
-- PostgreSQL database
-- Built-in authentication (email/password, OAuth)
-- Row Level Security (RLS)
-- Local development uses Supabase CLI with Docker
+**Package Manager**: Bun (NOT npm/yarn/pnpm)
+**Frontend**: React 18 + Vite + TypeScript + Tailwind CSS v3 + shadcn/ui
+**Backend**: Bun server (TypeScript) - minimal, mainly for future API needs
+**Database**: Supabase (PostgreSQL + Auth + RLS)
+**Deployment**: AWS Amplify (frontend) + Supabase Cloud (backend)
 
 ## Essential Commands
 
 ```bash
 # Development
-cd frontend && bun run dev    # Start frontend (port 4011)
-cd server && bun run dev      # Start backend (port 4010)
-bun run dev                    # Start both frontend and backend
+bun run dev                    # Start both frontend (4011) and backend (4010)
+cd frontend && bun run dev     # Frontend only
+cd server && bun run dev       # Backend only
 
-# Local Supabase Development
-bun run supabase:start         # Start local Supabase (requires Docker)
-bun run supabase:stop          # Stop local Supabase
-bun run supabase:status        # Check Supabase status
-bun run supabase:reset         # Reset database with migrations
+# Quality Checks
+cd frontend && bun run lint    # ESLint
+cd frontend && bun run type-check  # TypeScript check
+cd frontend && bun run format:check  # Prettier check
 
 # Building
-cd frontend && bun run build  # Build frontend for production
+cd frontend && bun run build   # Production build
 
-# Database
-bun run db:setup              # Initial database setup
-bun run db:push               # Push migrations to production
+# Database Migrations
+supabase migration new <name>  # Create new migration
+supabase db reset              # Reset local DB with migrations
+SUPABASE_ACCESS_TOKEN=$SUPABASE_SERVICE_KEY supabase db push --password "$SUPABASE_DB_PASSWORD"  # Push to production
 
-# Dependencies
-bun install                   # Install root dependencies
-bun run install:all           # Install all workspace dependencies
+# Local Supabase (requires Docker)
+bun run supabase:start         # Start local Supabase
+bun run supabase:stop          # Stop local Supabase
 ```
 
-## Project Structure
+## Architecture Overview
 
-Monorepo with three main workspaces:
-- `/frontend` - React SPA with Vite
-- `/server` - Bun TypeScript API server  
-- `/supabase` - Database migrations and configuration
+### Multi-Tenant SaaS Structure
+The app implements a multi-tenant architecture with:
+- **Organizations**: Top-level tenant container
+- **Entities**: Business entities within organizations (companies, individuals, trusts)
+- **Organization Members**: Users belonging to organizations with roles (owner, admin, member)
+- **Entity Permissions**: Fine-grained access control for entities
 
-Key configuration files:
-- `.env` - Production environment variables
-- `.env.local` - Local development environment variables
-- `frontend/vite.config.js` - Vite configuration (envDir points to parent directory)
-- `supabase/config.toml` - Supabase local configuration
+### Database Schema
+Key tables with RLS enabled:
+- `profiles` - User profiles linked to auth.users
+- `organizations` - Tenant organizations
+- `organization_members` - User-organization relationships
+- `entities` - Business entities (multi-type: company, individual, trust, partnership)
+- `entity_permissions` - User-entity access control
+- `calculations` - Core business logic storage
+- `audit_logs` - Activity tracking
+
+### Authentication Flow
+1. Supabase Auth handles email/password and OAuth (Google, GitHub, GitLab)
+2. Session management in `App.tsx` using `supabase.auth.onAuthStateChange`
+3. Protected routes via React Router conditional rendering
+4. OAuth redirects configured for production domain (app.calceum.com)
+
+### Frontend Routing
+- `/login`, `/signup` - Authentication pages
+- `/dashboard` - Main app entry after auth
+- `/onboarding` - Organization setup for new users
+- `/entities/*` - Entity management (list, detail, new)
+- `/settings`, `/profile` - User management
+
+### Component Architecture
+- **Contexts**: `OrganizationContext`, `EntityContext` for global state
+- **UI Components**: shadcn/ui primitives in `/frontend/src/components/ui/`
+- **Layout**: Sidebar navigation with collapsible sections
+- **Styling**: Tailwind CSS v3 with CSS variables for theming
 
 ## Environment Variables
 
-Frontend variables must be prefixed with `VITE_`:
-- `VITE_SUPABASE_URL` - Supabase project URL
-- `VITE_SUPABASE_ANON_KEY` - Supabase anonymous key
+Frontend (must prefix with `VITE_`):
+```
+VITE_SUPABASE_URL=https://[project].supabase.co
+VITE_SUPABASE_ANON_KEY=[anon_key]
+```
 
-Server variables:
-- `SUPABASE_URL` - Supabase project URL
-- `SUPABASE_SERVICE_KEY` - Supabase service role key
-- `DATABASE_URL` - PostgreSQL connection string
-- `PORT` - Server port (default: 4010)
+CI/CD (GitHub Secrets):
+```
+SUPABASE_ACCESS_TOKEN    # Service role token
+SUPABASE_DB_PASSWORD     # Database password
+AWS_ACCESS_KEY_ID        # For Amplify deployment
+AWS_SECRET_ACCESS_KEY    # For Amplify deployment
+```
 
-## Authentication Architecture
+## Deployment Pipeline
 
-The app uses Supabase Auth with:
-- Client-side auth in React (`@supabase/ssr`)
-- Session management in `App.jsx` and `Layout.jsx`
-- Protected routes using React Router
-- Auth state synchronized across components
+### AWS Amplify Configuration
+- **App ID**: d21tj2auyhfczb
+- **Region**: eu-west-2
+- **Domain**: app.calceum.com
+- **Build spec**: `amplify.yml` with Bun installation and AWS Secrets Manager integration
 
-## Styling and Components
+### CI/CD Workflows
+1. **`.github/workflows/ci-cd.yml`**: 
+   - PR checks: TypeScript, ESLint, build verification
+   - Main branch: Triggers Amplify deployment
 
-- **CSS Framework**: Tailwind CSS v3 (not v4)
-- **Component Library**: shadcn/ui with customizable primitives
-- **CSS Variables**: Defined in `frontend/src/index.css` for theming
-- **PostCSS**: Standard Tailwind v3 setup with autoprefixer
+2. **`.github/workflows/database-migration.yml`**:
+   - Auto-applies migrations when pushed to main
+   - Syncs database schema with code deployments
 
-Important: When working with Tailwind, use v3 syntax:
-- `@tailwind base/components/utilities` (not `@import "tailwindcss"`)
-- Standard PostCSS config with `tailwindcss` and `autoprefixer` plugins
+### Production URLs
+- App: https://app.calceum.com
+- Supabase: https://ducrwfvylwdaqpwfbdub.supabase.co
 
-## Local Development URLs
+## Development Guidelines
 
-When running locally with Supabase CLI:
-- Frontend: http://localhost:4011
-- Server API: http://localhost:4010  
-- Supabase Studio: http://localhost:54323
-- Supabase API: http://localhost:54321
-- Email Testing (Inbucket): http://localhost:54324
+### Pre-Commit Hooks
+Automatic quality checks run before every commit via Husky + lint-staged:
+- **TypeScript files**: ESLint fix → Prettier format → TypeScript type-check
+- **JavaScript files**: ESLint fix → Prettier format
+- **Other files**: Prettier format (JSON, CSS, Markdown)
 
-## Testing
+To bypass hooks in emergencies: `git commit -m "message" --no-verify`
 
-Currently no test files in the project. When adding tests:
-- Use `bun test` to run tests
-- Import from `bun:test` for test utilities
-- Place test files as `*.test.ts` or `*.test.tsx`
+### Code Quality Commands
+```bash
+# Run all checks manually
+cd frontend && bun run lint        # ESLint
+cd frontend && bun run type-check  # TypeScript
+cd frontend && bun run format:check # Prettier check
+cd frontend && bun run format      # Fix formatting
 
-## Common Issues and Solutions
+# Run smoke tests after deployment
+node scripts/smoke-test.js
+```
 
-**PostCSS/Tailwind conflicts**: Ensure dependencies are installed in the correct directory (frontend, not root)
+### Tailwind CSS
+Always use v3 syntax:
+- `@tailwind base/components/utilities` (NOT `@import "tailwindcss"`)
+- PostCSS with `tailwindcss` and `autoprefixer` plugins
 
-**Port conflicts**: Kill existing processes with `lsof -ti:PORT | xargs kill -9`
+### TypeScript
+- Strict mode enabled
+- All components must be properly typed
+- Use type imports: `import type { ... }`
+- Type errors block commits and deployments
 
-**Vite not processing CSS**: Clear cache with `rm -rf node_modules/.vite`
+### Database Operations
+- Always use RLS policies for security
+- Migrations in `supabase/migrations/`
+- Test locally with `supabase db reset` before pushing
 
-**Module resolution issues**: Check for duplicate node_modules in parent directories
+### State Management
+- Use React Context for global state (Organization, Entity)
+- Supabase real-time subscriptions for live updates
+- Session state managed at App.tsx level
+
+## Common Issues
+
+**Port conflicts**: `lsof -ti:4011 | xargs kill -9`
+**Vite cache**: `rm -rf frontend/node_modules/.vite`
+**Module resolution**: Check for duplicate node_modules in parent dirs
+**OAuth redirects**: Update in Supabase Dashboard > Authentication > URL Configuration

@@ -1,5 +1,5 @@
-import * as React from "react"
-import { LucideIcon } from "lucide-react"
+import * as React from 'react'
+import { LucideIcon } from 'lucide-react'
 
 import {
   SidebarGroup,
@@ -7,7 +7,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar'
 
 interface NavItem {
   title: string
@@ -19,10 +19,7 @@ interface NavSecondaryProps extends React.HTMLAttributes<HTMLDivElement> {
   items: NavItem[]
 }
 
-export function NavSecondary({
-  items,
-  ...props
-}: NavSecondaryProps) {
+export function NavSecondary({ items, ...props }: NavSecondaryProps) {
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
@@ -40,5 +37,5 @@ export function NavSecondary({
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
-  );
+  )
 }

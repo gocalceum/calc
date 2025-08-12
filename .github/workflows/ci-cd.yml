@@ -39,14 +39,12 @@ jobs:
       
       - name: TypeScript check
         run: cd frontend && bun run type-check
-        continue-on-error: true  # Allow to continue if type-check script doesn't exist yet
       
       - name: ESLint
         run: cd frontend && bun run lint
       
       - name: Prettier check
         run: cd frontend && bun run format:check
-        continue-on-error: true  # Allow to continue if format:check script doesn't exist yet
       
       - name: Build verification
         run: cd frontend && bun run build
@@ -67,21 +65,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
       
-      - name: Get Amplify App ID
+      - name: Set Amplify App ID
         id: amplify
         run: |
-          # Try to get Amplify app ID from AWS or use secret
-          if [ -n "${{ secrets.AMPLIFY_APP_ID }}" ]; then
-            echo "app_id=${{ secrets.AMPLIFY_APP_ID }}" >> $GITHUB_OUTPUT
-          else
-            # List Amplify apps and find calc app
-            APP_ID=$(aws amplify list-apps --query "apps[?name=='calc'].appId" --output text)
-            if [ -z "$APP_ID" ]; then
-              echo "Error: No Amplify app found. Please set AMPLIFY_APP_ID secret."
-              exit 1
-            fi
-            echo "app_id=$APP_ID" >> $GITHUB_OUTPUT
-          fi
+          echo "app_id=${{ secrets.AMPLIFY_APP_ID }}" >> $GITHUB_OUTPUT
       
       - name: Trigger Amplify deployment
         run: |
@@ -130,6 +117,7 @@ jobs:
             --query 'branch.displayName' \
             --output text)
           echo "🚀 Deployed to: https://${URL}"
+          echo "deployment_url=https://app.calceum.com" >> $GITHUB_ENV
       
       - name: Notify deployment status
         if: always()
@@ -140,3 +128,30 @@ jobs:
             echo "❌ Production deployment failed!"
           fi
           # Add Slack/Discord notification here if needed
+
+  smoke-tests:
+    name: Smoke Tests
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: deploy-production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Wait for deployment propagation
+        run: |
+          echo "⏳ Waiting 30 seconds for CDN propagation..."
+          sleep 30
+      
+      - name: Run smoke tests
+        run: |
+          node scripts/smoke-test.js
+      
+      - name: Report test results
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ All smoke tests passed!"
+          else
+            echo "❌ Smoke tests failed - deployment may have issues!"
+            echo "Please check https://app.calceum.com manually"
+          fi

@@ -18,7 +18,9 @@ export default function AuthPage() {
     })
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
         navigate('/')
       }
@@ -40,7 +42,7 @@ export default function AuthPage() {
           <p className="description" style={{ textAlign: 'center', marginBottom: '30px' }}>
             Sign in to your account or create a new one
           </p>
-          
+
           <Auth
             supabaseClient={supabase}
             appearance={{
@@ -75,7 +77,7 @@ export default function AuthPage() {
                     buttonBorderRadius: '4px',
                     inputBorderRadius: '4px',
                   },
-                }
+                },
               },
               style: {
                 button: {

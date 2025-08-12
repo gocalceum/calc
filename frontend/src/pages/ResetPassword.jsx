@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/supabaseClient'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 export default function ResetPassword() {
   const navigate = useNavigate()
@@ -42,7 +42,7 @@ export default function ResetPassword() {
     setLoading(true)
 
     const { error } = await supabase.auth.updateUser({
-      password: password
+      password: password,
     })
 
     if (error) {
@@ -62,15 +62,13 @@ export default function ResetPassword() {
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader className="text-center">
-              <img 
-                src="/Calceum LOGO 1F_PNG.png" 
-                alt="Calceum Logo" 
+              <img
+                src="/Calceum LOGO 1F_PNG.png"
+                alt="Calceum Logo"
                 className="mx-auto mb-4 h-12 w-auto"
               />
               <CardTitle className="text-2xl">Reset your password</CardTitle>
-              <CardDescription>
-                Enter your new password below
-              </CardDescription>
+              <CardDescription>Enter your new password below</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit}>

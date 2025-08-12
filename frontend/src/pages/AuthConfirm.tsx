@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { CheckCircle, XCircle } from 'lucide-react'
 
 type ConfirmationStatus = 'confirming' | 'success' | 'error'
@@ -15,10 +15,11 @@ export default function AuthConfirm() {
     // Check if we have confirmation tokens in the URL
     const hashParams = new URLSearchParams(window.location.hash.substring(1))
     const searchParams = new URLSearchParams(window.location.search)
-    
+
     const error = hashParams.get('error') || searchParams.get('error')
-    const errorDescription = hashParams.get('error_description') || searchParams.get('error_description')
-    
+    const errorDescription =
+      hashParams.get('error_description') || searchParams.get('error_description')
+
     if (error) {
       setStatus('error')
       setMessage(errorDescription || 'An error occurred during confirmation')
@@ -26,7 +27,7 @@ export default function AuthConfirm() {
       // If no error, assume success (Supabase redirects here after successful confirmation)
       setStatus('success')
       setMessage('Your email has been confirmed successfully!')
-      
+
       // Redirect to login after 3 seconds
       setTimeout(() => {
         navigate('/login?message=Email+confirmed!+You+can+now+sign+in.')
@@ -39,9 +40,9 @@ export default function AuthConfirm() {
       <div className="w-full max-w-sm">
         <Card>
           <CardHeader className="text-center">
-            <img 
-              src="/Calceum LOGO 1F_PNG.png" 
-              alt="Calceum Logo" 
+            <img
+              src="/Calceum LOGO 1F_PNG.png"
+              alt="Calceum Logo"
               className="mx-auto mb-4 h-12 w-auto"
             />
             {status === 'confirming' && (
@@ -73,30 +74,18 @@ export default function AuthConfirm() {
             )}
             {status === 'success' && (
               <div className="text-center">
-                <p className="mb-4 text-sm text-muted-foreground">
-                  Redirecting to login page...
-                </p>
-                <Button 
-                  onClick={() => navigate('/login')}
-                  className="w-full"
-                >
+                <p className="mb-4 text-sm text-muted-foreground">Redirecting to login page...</p>
+                <Button onClick={() => navigate('/login')} className="w-full">
                   Go to Login
                 </Button>
               </div>
             )}
             {status === 'error' && (
               <div className="space-y-4">
-                <Button 
-                  onClick={() => navigate('/signup')}
-                  className="w-full"
-                  variant="outline"
-                >
+                <Button onClick={() => navigate('/signup')} className="w-full" variant="outline">
                   Back to Sign Up
                 </Button>
-                <Button 
-                  onClick={() => navigate('/login')}
-                  className="w-full"
-                >
+                <Button onClick={() => navigate('/login')} className="w-full">
                   Go to Login
                 </Button>
               </div>

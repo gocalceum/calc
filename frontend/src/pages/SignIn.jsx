@@ -16,7 +16,9 @@ export default function SignIn() {
     })
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
         navigate('/')
       }
@@ -31,7 +33,7 @@ export default function SignIn() {
         <h1 className="header" style={{ textAlign: 'center', marginBottom: '30px' }}>
           Sign In to Calc App
         </h1>
-        
+
         <Auth
           supabaseClient={supabase}
           appearance={{
@@ -46,7 +48,7 @@ export default function SignIn() {
                   inputBorder: '#333',
                   inputBorderFocus: '#24b47e',
                   inputBorderHover: '#444',
-                }
+                },
               },
             },
             className: {
