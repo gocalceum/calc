@@ -154,6 +154,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      
+      - name: Install dependencies
+        run: bun install
+      
       - name: Wait for deployment propagation
         run: |
           echo "⏳ Waiting 30 seconds for CDN propagation..."
@@ -161,7 +168,7 @@ jobs:
       
       - name: Run smoke tests
         run: |
-          node scripts/smoke-test.js
+          bunx tsx scripts/smoke-test.ts
       
       - name: Report test results
         if: always()
