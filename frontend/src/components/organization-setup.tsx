@@ -49,13 +49,12 @@ export function OrganizationSetup() {
     try {
       const slug = generateSlug(formData.name)
 
-      const { data: existingOrg } = await supabase
-        .from('organizations')
-        .select('slug')
-        .eq('slug', slug)
-        .single()
+      // Use the function to check slug availability
+      const { data: isAvailable } = await supabase.rpc('check_slug_available', {
+        slug_to_check: slug,
+      })
 
-      const finalSlug = existingOrg ? `${slug}-${Date.now().toString(36)}` : slug
+      const finalSlug = !isAvailable ? `${slug}-${Date.now().toString(36)}` : slug
 
       const { data: orgData, error: createError } = await supabase.rpc(
         'create_organization_with_owner',

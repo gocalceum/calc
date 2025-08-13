@@ -423,6 +423,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_slug_available: {
+        Args: { slug_to_check: string }
+        Returns: boolean
+      }
       create_organization_with_owner: {
         Args: { org_name: string; org_slug: string; org_type?: string }
         Returns: string
@@ -440,6 +444,15 @@ export type Database = {
       get_current_org: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      manage_organization_member: {
+        Args: {
+          p_organization_id: string
+          p_user_id: string
+          p_role: string
+          p_action: string
+        }
+        Returns: boolean
       }
       switch_entity: {
         Args: { entity_id: string }
