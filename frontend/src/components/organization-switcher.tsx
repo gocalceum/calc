@@ -35,11 +35,10 @@ export function OrganizationSwitcher() {
             <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
               <Building2 className="size-4" />
             </div>
-            <div className="grid flex-1 text-left text-sm leading-tight">
+            <div className="flex flex-1 items-center text-left text-sm">
               <span className="truncate font-semibold">
                 {isLoading ? 'Loading...' : 'No Organization'}
               </span>
-              <span className="truncate text-xs">Setup required</span>
             </div>
             <ChevronsUpDown className="ml-auto" />
           </SidebarMenuButton>
@@ -60,12 +59,9 @@ export function OrganizationSwitcher() {
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                 <Building2 className="size-4" />
               </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
+              <div className="flex flex-1 items-center text-left text-sm">
                 <span className="truncate font-semibold">
                   {currentOrganization?.name || 'Select Organization'}
-                </span>
-                <span className="truncate text-xs">
-                  {currentOrganization?.type || 'Organization'}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto" />

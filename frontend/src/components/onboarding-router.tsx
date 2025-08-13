@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useOrganization } from '@/contexts/OrganizationContext'
 import { useAuth } from '@/hooks/useAuth'
@@ -16,11 +16,10 @@ export function OnboardingRouter({ children }: OnboardingRouterProps) {
   const location = useLocation()
   const { user } = useAuth()
   const { organizations, isLoading } = useOrganization()
-  const hasChecked = useRef(false)
 
   useEffect(() => {
-    // Skip if already checked or still loading
-    if (hasChecked.current || isLoading || !user) return
+    // Skip if still loading or no user
+    if (isLoading || !user) return
 
     const isPublicPath = PUBLIC_PATHS.some((path) => location.pathname.startsWith(path))
     const isOnboardingPath = ONBOARDING_PATHS.some((path) => location.pathname.startsWith(path))
@@ -31,17 +30,15 @@ export function OnboardingRouter({ children }: OnboardingRouterProps) {
       const hasOrganizations = organizations && organizations.length > 0
 
       if (!hasOrganizations && !isOnboardingPath) {
-        hasChecked.current = true
         navigate('/onboarding', { replace: true })
       } else if (hasOrganizations && isOnboardingPath) {
-        hasChecked.current = true
         navigate('/dashboard', { replace: true })
       }
     }
   }, [organizations, isLoading, location.pathname, navigate, user])
 
   // Only show loading on initial load, not on navigation
-  if (isLoading && !hasChecked.current && user) {
+  if (isLoading && user) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
