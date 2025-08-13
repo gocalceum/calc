@@ -33,7 +33,7 @@ cd frontend && bun run build   # Production build
 # Database Migrations
 supabase migration new <name>  # Create new migration
 supabase db reset              # Reset local DB with migrations
-SUPABASE_ACCESS_TOKEN=$SUPABASE_SERVICE_KEY supabase db push --password "$SUPABASE_DB_PASSWORD"  # Push to production
+# Production migrations: Run via GitHub Actions (push to main or gh workflow run database-migration.yml)
 
 # Local Supabase Management
 supabase start                 # Start local Supabase
@@ -112,8 +112,9 @@ DATABASE_URL=postgresql://postgres.[project]:[password]@aws-0-ap-southeast-1.poo
 
 ### CI/CD (GitHub Secrets)
 ```
-SUPABASE_ACCESS_TOKEN    # Service role token
-SUPABASE_DB_PASSWORD     # Database password
+SUPABASE_ACCESS_TOKEN    # Service role token (for Management API)
+SUPABASE_DB_PASSWORD     # Database password (GitHub Actions only)
+RESEND_API_KEY          # Email service API key
 AWS_ACCESS_KEY_ID        # For Amplify deployment
 AWS_SECRET_ACCESS_KEY    # For Amplify deployment
 ```

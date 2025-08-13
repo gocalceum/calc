@@ -14,7 +14,7 @@
     "install:all": "bun install && cd frontend && bun install && cd ../server && bun install",
     "build": "cd frontend && bun run build",
     "db:setup": "./scripts/setup-db.sh",
-    "db:push": "supabase db push -p $SUPABASE_DB_PASSWORD",
+    "db:push:prod": "echo 'Production migrations should be run via GitHub Actions. Use: gh workflow run database-migration.yml'",
     "supabase:start": "./scripts/start-local.sh",
     "supabase:stop": "supabase stop",
     "supabase:status": "supabase status",

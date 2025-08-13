@@ -60,9 +60,9 @@ cd server && bun run dev  # Uses .env by default
   - Port: `54322`
 
 ### Production Database (Supabase Cloud)
-- **Pooled connection**: `postgresql://postgres.ducrwfvylwdaqpwfbdub:PASSWORD@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres`
+- **Pooled connection**: Managed via Supabase Dashboard
 - **Via Supabase API**: `https://ducrwfvylwdaqpwfbdub.supabase.co`
-- **Password**: Stored in `.env` as `SUPABASE_DB_PASSWORD`
+- **Password**: Stored securely in GitHub Secrets (never locally)
 
 ## Environment Variables Reference
 
@@ -72,9 +72,9 @@ cd server && bun run dev  # Uses .env by default
 
 ### Backend/Server
 - `SUPABASE_URL`: Supabase API URL (for server-side operations)
-- `SUPABASE_SERVICE_KEY`: Service role key (admin access)
-- `DATABASE_URL`: Direct PostgreSQL connection string
-- `SUPABASE_DB_PASSWORD`: Database password for migrations
+- `SUPABASE_SERVICE_KEY`: Service role key (local development only)
+- `DATABASE_URL`: Direct PostgreSQL connection string (local only)
+- Production credentials: Managed via GitHub Secrets and AWS Secrets Manager
 
 ### Ports
 - `PORT`: Backend server port (default: 4010)
