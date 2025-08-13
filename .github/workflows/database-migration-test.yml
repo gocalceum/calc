@@ -1,0 +1,34 @@
+name: Test Database Migration Without Password
+
+on:
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: ducrwfvylwdaqpwfbdub
+
+jobs:
+  test-migration:
+    name: Test Migration Without DB Password
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      
+      - name: Test with ACCESS_TOKEN only
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          echo "Testing if ACCESS_TOKEN is sufficient..."
+          
+          # Link to the remote project
+          supabase link --project-ref ${{ env.PROJECT_ID }}
+          
+          # Try to list migrations without password
+          echo "Attempting to list migrations without password..."
+          supabase migration list --linked
+          
+          echo "✅ If this succeeds, we can remove SUPABASE_DB_PASSWORD"
