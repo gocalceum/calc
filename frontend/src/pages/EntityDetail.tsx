@@ -16,12 +16,13 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/s
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Edit, Trash2, MapPin, Phone, Mail, Globe } from 'lucide-react'
-
+// import type { Tables } from '@/lib/database.types'
 // type Entity = Tables<'entities'>
 
 export default function EntityDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [entity, setEntity] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 

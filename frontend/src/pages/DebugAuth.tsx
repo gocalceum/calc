@@ -2,8 +2,8 @@ import { supabase } from '@/supabaseClient'
 import type { Provider } from '@supabase/supabase-js'
 
 interface OAuthTestResult {
-  data: any
-  error: any
+  data: unknown
+  error: Error | null
 }
 
 export default function DebugAuth() {

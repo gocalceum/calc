@@ -138,6 +138,7 @@ export function EntityProvider({ children }: { children: React.ReactNode }) {
           ...data,
           organization_id: currentOrganization.id,
           created_by: user.id,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any)
         .select()
         .single()
