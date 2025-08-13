@@ -13,17 +13,11 @@ dist/
 # Misc
 .DS_Store
 
-# Environment files - NEVER commit these
-.env                    # Production credentials
-.env.local             # Local development
-.env.development.local
-.env.test.local
-.env.production.local
-.env.production        # Production credentials
-**/.env               # Any .env in subdirectories
-**/.env.*             # Any .env.* in subdirectories
-!.env.example         # Exception: template is safe
-!.env.local.example   # Exception: local template is safe
+# Environment files
+.env
+.env.local
+.env.*.local
+!.env.example
 
 # Debug
 npm-debug.log*
