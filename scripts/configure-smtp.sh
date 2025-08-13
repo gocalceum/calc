@@ -33,7 +33,7 @@ curl -X PATCH "https://api.supabase.com/v1/projects/$PROJECT_REF/config/auth" \
   -d "{
     \"external_email_enabled\": true,
     \"smtp_host\": \"$SMTP_HOST\",
-    \"smtp_port\": $SMTP_PORT,
+    \"smtp_port\": \"$SMTP_PORT\",
     \"smtp_user\": \"$SMTP_USER\",
     \"smtp_pass\": \"$RESEND_API_KEY\",
     \"smtp_sender_email\": \"$SMTP_FROM_EMAIL\",

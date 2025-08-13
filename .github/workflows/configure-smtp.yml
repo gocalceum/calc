@@ -29,7 +29,7 @@ jobs:
             -d '{
               "external_email_enabled": true,
               "smtp_host": "smtp.resend.com",
-              "smtp_port": 587,
+              "smtp_port": "587",
               "smtp_user": "resend",
               "smtp_pass": "'"$RESEND_API_KEY"'",
               "smtp_sender_email": "noreply@calceum.com",
