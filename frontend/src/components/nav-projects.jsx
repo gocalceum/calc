@@ -1,4 +1,4 @@
-import { Folder, MoreHorizontal, Share, Trash2, LucideIcon } from 'lucide-react'
+import { Folder, Forward, MoreHorizontal, Trash2 } from 'lucide-react'
 
 import {
   DropdownMenu,
@@ -17,17 +17,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 
-interface Project {
-  name: string
-  url: string
-  icon: LucideIcon
-}
-
-interface NavProjectsProps {
-  projects: Project[]
-}
-
-export function NavProjects({ projects }: NavProjectsProps) {
+export function NavProjects({ projects }) {
   const { isMobile } = useSidebar()
 
   return (
@@ -50,7 +40,7 @@ export function NavProjects({ projects }: NavProjectsProps) {
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-48"
+                className="w-48 rounded-lg"
                 side={isMobile ? 'bottom' : 'right'}
                 align={isMobile ? 'end' : 'start'}
               >
@@ -59,7 +49,7 @@ export function NavProjects({ projects }: NavProjectsProps) {
                   <span>View Project</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Share className="text-muted-foreground" />
+                  <Forward className="text-muted-foreground" />
                   <span>Share Project</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -72,8 +62,8 @@ export function NavProjects({ projects }: NavProjectsProps) {
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>
-          <SidebarMenuButton>
-            <MoreHorizontal />
+          <SidebarMenuButton className="text-sidebar-foreground/70">
+            <MoreHorizontal className="text-sidebar-foreground/70" />
             <span>More</span>
           </SidebarMenuButton>
         </SidebarMenuItem>

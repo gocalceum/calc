@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": false,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "outDir": "dist"
+  },
+  "exclude": ["node_modules", "dist", "build", "vite.config.js", "vite.config.build.js"]
+}
