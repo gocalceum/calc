@@ -15,10 +15,12 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, Building2, Zap } from 'lucide-react'
 import { supabase } from '@/supabaseClient'
 import { useAuth } from '@/hooks/useAuth'
+import { useOrganization } from '@/contexts/OrganizationContext'
 
 export function OrganizationSetup() {
   const navigate = useNavigate()
   useAuth()
+  const { refreshOrganizations } = useOrganization()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
@@ -75,6 +77,9 @@ export function OrganizationSetup() {
           })
           .eq('id', orgData)
       }
+
+      // Refresh the organization context to include the new organization
+      await refreshOrganizations()
 
       navigate('/dashboard')
     } catch (err) {
