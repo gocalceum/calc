@@ -1,0 +1,14 @@
+vars {
+  base_url: https://api.service.hmrc.gov.uk
+  auth_url: https://www.tax.service.gov.uk
+  client_id: {{process.env.HMRC_PROD_CLIENT_ID}}
+  client_secret: {{process.env.HMRC_PROD_CLIENT_SECRET}}
+  redirect_uri: https://app.calceum.com/hmrc-callback
+  scope: read:self-assessment write:self-assessment
+}
+
+vars:secret [
+  client_secret,
+  access_token,
+  refresh_token
+]

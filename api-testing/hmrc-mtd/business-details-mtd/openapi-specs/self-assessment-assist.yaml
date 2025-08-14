@@ -1,0 +1,817 @@
+openapi: 3.0.3
+info:
+  title: Self Assessment Assist (MTD)
+  description: |
+    # Overview
+    The HMRC Assist report is generated using the customers’ National Insurance number (NINO), Calculation ID and Tax year. The report contains targeted messages contained within the JSON response for the customer.
+
+    This API allows developers to:
+
+    * retrieve a HMRC Assist report for a given customer with a list of messages for the customer
+    * securely generate a report that is sent to or displayed after it has been generated
+    * allow the client to acknowledge the report
+    # Send Fraud Prevention Data
+    HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters.
+    <div class="govuk-warning-text warning-icon-fix">
+      <span class="govuk-warning-text__icon warning-icon-ui-fix" aria-hidden="true">!</span>
+      <strong class="govuk-warning-text__text">
+        <span class="govuk-warning-text__assistive">Warning</span>
+        You are required by law to submit header data for this API. This includes all associated APIs and endpoints.
+      </strong>
+    </div>
+
+    [Check the data you need to send](/guides/fraud-prevention/). You can also use the [Test API](/api-documentation/docs/api/service/txm-fph-validator-api/1.0) during initial development and as part of your quality assurance checks.
+
+    # Versioning
+    When an API changes in a way that is backwards-incompatible, we increase the version number of the API.
+    See our [reference guide](/api-documentation/docs/reference-guide#versioning) for more on
+    versioning.
+    # Errors
+    We use standard HTTP status codes to show whether an API request succeeded or not. They are usually in the range:
+    - 200 to 299 if it succeeded, including code 202 if it was accepted by an API that needs to wait for further action
+    - 400 to 499 if it failed because of a client error by your application
+    - 500 to 599 if it failed because of an error on our server
+
+    Errors specific to each API are shown in the Endpoints section, under Response. See our
+    [reference guide](/api-documentation/docs/reference-guide#errors) for more on errors.
+
+    # Changelog
+    You can find the changelog in the [self-assessment-assist-changelog](https://github.com/hmrc/income-tax-mtd-changelog) GitHub wiki.
+
+    # Support
+    * Direct reports of bugs or errors in Production or Sandbox code, or queries about HMRC business functionality (such as how a specific field is used by HMRC or why it is needed) to the [Software Development Support Team (SDST)](https://developer.service.hmrc.gov.uk/developer/support).
+    * Send queries or feedback related to the design of the APIs (including recommended changes) using the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/issues) GitHub page.
+    * <a href="/contact/report-technical-problem?newTab=true&service=api-documentation-frontend" target="_blank">Is this page not working properly? (opens in new tab)</a>
+
+    # Testing
+    You can use the sandbox environment to <a href="/api-documentation/docs/testing">test this API</a>. You can use the <a href="/api-documentation/docs/api/service/api-platform-test-user/1.0">Create Test User API</a> or it's frontend service to create test users.
+    It may not be possible to test all scenarios in the sandbox. You can test some scenarios by passing the `Gov-Test-Scenario` header. Documentation for each endpoint includes a **Test data** section, which explains the scenarios that you can simulate using the `Gov-Test-Scenario` header.
+    If you have a specific testing need that is not supported in the sandbox, contact <a href="/developer/support">our support team</a>.
+    Some APIs may be marked \[test only\]. This means that they are not available for use in production and may change.
+  version: "1.0"
+servers:
+- url: https://test-api.service.hmrc.gov.uk
+  description: Sandbox
+- url: https://api.service.hmrc.gov.uk/
+  description: Production
+tags:
+- name: Generate Report
+  description: request a HMRC Assist report to be generated for a customer or their
+    agent
+- name: Acknowledge Report
+  description: allow the customer or agent to acknowledge the report
+paths:
+  /individuals/self-assessment/assist/reports/{nino}/{taxYear}/{calculationId}:
+    post:
+      tags:
+      - Generate Report
+      summary: Produce a HMRC Self Assessment Assist Report
+      description: |
+        This endpoint allows a developer to request a HMRC Assist report to be generated for a customer or their agent
+      parameters:
+      - name: nino
+        in: path
+        description: |
+          National Insurance number, in the format `AA999999A`
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: TC663795B
+      - name: taxYear
+        in: path
+        description: |
+          The tax year to which the data applies in the format `YYYY-YY`
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 2023-24
+      - name: calculationId
+        in: path
+        description: |
+          The unique identifier for the calculation. Must conform to the regular expression: `^[0-9]{8}|[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c
+      - name: Accept
+        in: header
+        description: |
+          Specifies the response format and the version of the API to be used.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          enum:
+          - application/vnd.hmrc.1.0+json
+      - name: Authorization
+        in: header
+        description: |
+          An OAuth 2.0 Bearer Token with the *read:self-assessment-assist* scope.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+      responses:
+        "200":
+          description: Success
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+          content:
+            application/json:
+              schema:
+                title: List of Self Assessment Calculations
+                required:
+                - calculationId
+                - correlationId
+                - nino
+                - reportId
+                - taxYear
+                type: object
+                properties:
+                  reportId:
+                    pattern: "^[0-9]{8}|[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+                    type: string
+                    description: The unique ID (UUID) of the report.
+                    example: f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c
+                  messages:
+                    type: array
+                    description: A list of HMRC Assist 'messages' for the customer.
+                    items:
+                      required:
+                      - body
+                      - path
+                      - title
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                          description: Title of message
+                          example: Turnover and Cost of Sales
+                        body:
+                          type: string
+                          description: The body contains the message for the customer.
+                          example: Your cost of sales (12000) is greater than your
+                            actual income (4000). This may be an error.
+                        action:
+                          type: string
+                          description: The recommend action the customer should take.
+                          example: Please read our guidance and consider amending
+                            Box 10 of your submission.
+                        links:
+                          type: array
+                          description: A list of help or support 'links' associated
+                            with the message body.
+                          items:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                                description: The title text that appears before the
+                                  links.
+                                example: Our guidance on Turnover and Expenses can
+                                  be read here.
+                              url:
+                                type: string
+                                description: The URL of support or help link.
+                                example: https://www.gov.uk/expenses-if-youre-self-employed
+                            description: A list of help or support 'links' associated
+                              with the message body.
+                            example: "[ { \",Turnover and Cost of Sales\", \"Your\
+                              \ cost of sales (12000) is greater than your actual\
+                              \ income (4000). This may be an error.\" }, .. etc]]"
+                        path:
+                          type: string
+                          description: The HTTP path to guidance provided by HMRC.
+                          example: general/total_declared_turnover
+                      description: The body contains the message for the customer.
+                      example: "[ { \",Turnover and Cost of Sales\", \"Your cost of\
+                        \ sales (12000) is greater than your actual income (4000).\
+                        \ This may be an error.\" }, .. etc]]"
+                  nino:
+                    type: string
+                    description: "National Insurance number, in the format AA999999A."
+                    example: TC663795B
+                  taxYear:
+                    type: string
+                    description: "The tax year the data applies to, for example, 2021-22.\
+                      \ The start year and end year must not span two tax years. No\
+                      \ gaps are allowed, for example, 2020-22 is not valid."
+                    example: 2017-18
+                  calculationId:
+                    type: string
+                    description: "The unique identifier for the calculation. Must\
+                      \ conform the regular expression: `^[0-9]{8}|[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`"
+                    example: f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c
+                  correlationId:
+                    type: string
+                    description: The correlationId of the report.
+                    example: 7X57CKG72JVNSSS9SALT
+                description: This endpoint allows a developer to generate and return
+                  a HMRC Assist report for a tax calculation for a given customer.
+              examples:
+                example-response:
+                  description: Example Response
+                  value:
+                    reportId: f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c
+                    messages:
+                    - title: Turnover and Cost of Sales
+                      body: Your cost of sales (12000) is greater than your actual
+                        income (4000). This may be an error.
+                      action: Please read our guidance and consider amending Box 10
+                        of your submission.
+                      links:
+                      - title: Our guidance on Turnover and Expenses can be read here.
+                        url: https://www.gov.uk/expenses-if-youre-self-employed
+                      path: general/total_declared_turnover
+                    nino: TC663795B
+                    taxYear: 2017-18
+                    calculationId: f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c
+                    correlationId: 7X57CKG72JVNSSS9SALT
+        "400":
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  required:
+                  - code
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      description: The error code
+                    message:
+                      type: string
+                      description: The error message
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value:
+                  - code: FORMAT_NINO
+                    message: The provided NINO is invalid.
+                FORMAT_CALC_ID:
+                  description: |
+                    The format of the supplied CalculationID is not valid
+                  value:
+                  - code: FORMAT_CALC_ID
+                    message: The provided Calculation ID is invalid.
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied taxYear value is not valid.
+                  value:
+                  - code: FORMAT_TAX_YEAR
+                    message: The provided Tax Year is invalid.
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value:
+                  - code: RULE_TAX_YEAR_RANGE_INVALID
+                    message: The provided Tax Year range is invalid.
+        "403":
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  required:
+                  - code
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      description: The error code
+                    message:
+                      type: string
+                      description: The error message
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value:
+                  - code: CLIENT_OR_AGENT_NOT_AUTHORISED
+                    message: The client or agent is not authorised.
+        "404":
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  required:
+                  - code
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      description: The error code
+                    message:
+                      type: string
+                      description: The error message
+              examples:
+                MATCHING_CALCULATION_ID_NOT_FOUND:
+                  description: |
+                    Calculation ID was not found.
+                  value:
+                  - code: MATCHING_CALCULATION_ID_NOT_FOUND
+                    message: The Calculation ID was not found at this time. You can
+                      try again later.
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    URL missing element.
+                  value:
+                  - code: MATCHING_RESOURCE_NOT_FOUND
+                    message: A resource with the name in the request can not be found.
+        "401":
+          description: Unauthorized
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  required:
+                  - code
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      description: The error code
+                    message:
+                      type: string
+                      description: The error message
+              examples:
+                INVALID_CREDENTIALS:
+                  description: |
+                    Invalid Authentication information provided.
+                  value:
+                  - code: INVALID_CREDENTIALS
+                    message: Invalid Authentication information provided."
+      security:
+      - userRestricted:
+        - read:self-assessment-assist
+  /individuals/self-assessment/assist/reports/acknowledge/{nino}/{reportId}/{correlationId}:
+    post:
+      tags:
+      - Acknowledge Report
+      summary: Acknowledge a HMRC Self Assessment Assist Report
+      description: |
+        This endpoint allows a developer to acknowledge that the given report has been read by the customer or agent.
+      parameters:
+      - name: nino
+        in: path
+        description: |
+          National Insurance number, in the format `AA999999A`
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: TC663795B
+      - name: reportId
+        in: path
+        description: |
+          The unique identifier for the report. Must conform to the regular expression: `^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$`
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 579800fe-e047-cd40-b3e4-0e14b1f183a8
+      - name: correlationId
+        in: path
+        description: |
+          Unique ID for operation tracking
+          String, 36 characters.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: c75f40a6-a3df-4429-a697-471eeec46435
+      - name: Authorization
+        in: header
+        description: |
+          An OAuth 2.0 Bearer Token with the *write:self-assessment-assist* scope.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+      responses:
+        "204":
+          description: HTTP status 204 (No Content)
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+        "400":
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  required:
+                  - code
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      description: The error code
+                    message:
+                      type: string
+                      description: The error message
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value:
+                  - code: FORMAT_NINO
+                    message: The provided NINO is invalid.
+                FORMAT_REPORT_ID:
+                  description: |
+                    The format of the supplied reportId is not valid.
+                  value:
+                  - code: FORMAT_REPORT_ID
+                    message: The provided Report ID is invalid.
+        "403":
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  required:
+                  - code
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      description: The error code
+                    message:
+                      type: string
+                      description: The error message
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value:
+                  - code: CLIENT_OR_AGENT_NOT_AUTHORISED
+                    message: The client or agent is not authorised.
+                CORRELATION_ID_NOT_AUTHORISED:
+                  description: |
+                    The correlation ID is not the expected value for this report.
+                  value:
+                  - code: CORRELATION_ID_NOT_AUTHORISED
+                    message: The Correlation ID is not the expected value for this
+                      report.
+        "404":
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  required:
+                  - code
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      description: The error code
+                    message:
+                      type: string
+                      description: The error message
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    URL missing element.
+                  value:
+                  - code: MATCHING_RESOURCE_NOT_FOUND
+                    message: A resource with the name in the request can not be found.
+        "401":
+          description: Unauthorized
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  required:
+                  - code
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      description: The error code
+                    message:
+                      type: string
+                      description: The error message
+              examples:
+                INVALID_CREDENTIALS:
+                  description: |
+                    Invalid Authentication information provided.
+                  value:
+                  - code: INVALID_CREDENTIALS
+                    message: Invalid Authentication information provided."
+      security:
+      - userRestricted:
+        - write:self-assessment-assist
+components:
+  schemas:
+    errorResponse:
+      type: array
+      items:
+        required:
+        - code
+        type: object
+        properties:
+          code:
+            type: string
+            description: The error code
+          message:
+            type: string
+            description: The error message
+    errorResponses:
+      required:
+      - code
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+  parameters:
+    nino:
+      name: nino
+      in: path
+      description: |
+        National Insurance number, in the format `AA999999A`
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        example: TC663795B
+    taxYear:
+      name: taxYear
+      in: path
+      description: |
+        The tax year to which the data applies in the format `YYYY-YY`
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        example: 2023-24
+    reportId:
+      name: reportId
+      in: path
+      description: |
+        The unique identifier for the report. Must conform to the regular expression: `^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$`
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        example: 579800fe-e047-cd40-b3e4-0e14b1f183a8
+    calculationId:
+      name: calculationId
+      in: path
+      description: |
+        The unique identifier for the calculation. Must conform to the regular expression: `^[0-9]{8}|[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        example: f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c
+    correlationId:
+      name: correlationId
+      in: path
+      description: |
+        Unique ID for operation tracking
+        String, 36 characters.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        example: c75f40a6-a3df-4429-a697-471eeec46435
+    acceptHeader:
+      name: Accept
+      in: header
+      description: |
+        Specifies the response format and the version of the API to be used.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        enum:
+        - application/vnd.hmrc.1.0+json
+    authorizationReadScopeHeader:
+      name: Authorization
+      in: header
+      description: |
+        An OAuth 2.0 Bearer Token with the *read:self-assessment-assist* scope.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+    authorizationWriteScopeHeader:
+      name: Authorization
+      in: header
+      description: |
+        An OAuth 2.0 Bearer Token with the *write:self-assessment-assist* scope.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+  examples:
+    formatNino:
+      description: |
+        The format of the supplied NINO field is not valid.
+      value:
+      - code: FORMAT_NINO
+        message: The provided NINO is invalid.
+    formatCalcId:
+      description: |
+        The format of the supplied CalculationID is not valid
+      value:
+      - code: FORMAT_CALC_ID
+        message: The provided Calculation ID is invalid.
+    formatTaxYear:
+      description: |
+        The format of the supplied taxYear value is not valid.
+      value:
+      - code: FORMAT_TAX_YEAR
+        message: The provided Tax Year is invalid.
+    ruleTaxYearRangeInvalid:
+      description: |
+        Tax year range invalid. A tax year range of one year is required.
+      value:
+      - code: RULE_TAX_YEAR_RANGE_INVALID
+        message: The provided Tax Year range is invalid.
+    formatReportId:
+      description: |
+        The format of the supplied reportId is not valid.
+      value:
+      - code: FORMAT_REPORT_ID
+        message: The provided Report ID is invalid.
+    clientOrAgentNotAuthorised:
+      description: |
+        The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+      value:
+      - code: CLIENT_OR_AGENT_NOT_AUTHORISED
+        message: The client or agent is not authorised.
+    unexpectedCorrelationId:
+      description: |
+        The correlation ID is not the expected value for this report.
+      value:
+      - code: CORRELATION_ID_NOT_AUTHORISED
+        message: The Correlation ID is not the expected value for this report.
+    matchingResourceNotFoundCalcId:
+      description: |
+        Calculation ID was not found.
+      value:
+      - code: MATCHING_CALCULATION_ID_NOT_FOUND
+        message: The Calculation ID was not found at this time. You can try again
+          later.
+    matchingResourceNotFoundIncorrectURL:
+      description: |
+        URL missing element.
+      value:
+      - code: MATCHING_RESOURCE_NOT_FOUND
+        message: A resource with the name in the request can not be found.
+    invalidCredentials:
+      description: |
+        Invalid Authentication information provided.
+      value:
+      - code: INVALID_CREDENTIALS
+        message: Invalid Authentication information provided."
+  headers:
+    correlationId:
+      description: |
+        Unique ID for operation tracking
+        String, 36 characters.
+      required: true
+      schema:
+        type: string
+        example: c75f40a6-a3df-4429-a697-471eeec46435
+  securitySchemes:
+    userRestricted:
+      type: oauth2
+      description: |
+        HMRC supports OAuth 2.0 for authenticating user-restricted API requests using an OAuth 2.0 Bearer Token in the
+        AUTHORIZATION header.
+        See https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints for details.
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
+          scopes:
+            write:self-assessment-assist: Grant write access
+            read:self-assessment-assist: Grant read access

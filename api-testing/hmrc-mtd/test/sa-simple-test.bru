@@ -1,0 +1,28 @@
+meta {
+  name: SA Simple Test - List Calculations
+  type: http
+  seq: 19
+}
+
+get {
+  url: {{base_url}}/individuals/calculations/{{test_user_nino}}/self-assessment
+}
+
+headers {
+  Accept: application/vnd.hmrc.3.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  const token = bru.getVar('access_token');
+  const nino = bru.getProcessEnv('TEST_USER_NINO');
+  console.log('Using NINO:', nino);
+  console.log('Full URL: https://test-api.service.hmrc.gov.uk/individuals/calculations/' + nino + '/self-assessment');
+}
+
+docs {
+  ## List Self Assessment Calculations
+  
+  This endpoint lists tax calculations for a given NINO.
+  Part of the Self-Assessment Tax Calculation API.
+}

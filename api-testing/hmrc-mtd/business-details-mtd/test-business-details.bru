@@ -1,0 +1,26 @@
+meta {
+  name: Test Business Details
+  type: http
+  seq: 11
+}
+
+get {
+  url: https://test-api.service.hmrc.gov.uk/individuals/business/details/NE101272A/XBIS12345678901
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.2.0+json
+  Authorization: Bearer 96720ff4eec36f7f2a03a5e0c81af5f6
+}
+
+tests {
+  test("Check response", function() {
+    console.log('Status:', res.status);
+    console.log('Business Details:', JSON.stringify(res.body, null, 2));
+  });
+}
+
+docs {
+  ## Get Business Details for Company X
+}

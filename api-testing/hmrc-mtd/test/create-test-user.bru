@@ -1,0 +1,74 @@
+meta {
+  name: Create Test User
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/create-test-user/individuals
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/vnd.hmrc.1.0+json
+}
+
+body:json {
+  {
+    "serviceNames": [
+      "self-assessment",
+      "mtd-income-tax"
+    ]
+  }
+}
+
+script:post-response {
+  // Save test user details
+  if (res.body.userId) {
+    bru.setVar('test_user_id', res.body.userId);
+    console.log('Test User ID:', res.body.userId);
+  }
+  
+  if (res.body.nino) {
+    bru.setVar('test_user_nino', res.body.nino);
+    console.log('Test User NINO:', res.body.nino);
+  }
+  
+  if (res.body.mtdItId) {
+    bru.setVar('test_mtd_id', res.body.mtdItId);
+    console.log('Test MTD ID:', res.body.mtdItId);
+  }
+  
+  if (res.body.password) {
+    console.log('⚠️ Save this password securely:', res.body.password);
+  }
+}
+
+tests {
+  test("Should create test user", function() {
+    expect(res.status).to.equal(201);
+    expect(res.body.userId).to.be.a('string');
+    expect(res.body.password).to.be.a('string');
+  });
+}
+
+docs {
+  ## Create Test User
+  
+  Creates a test user for sandbox testing with the specified services.
+  
+  ### Services Available:
+  - self-assessment
+  - mtd-income-tax
+  - mtd-vat
+  - customs-services
+  
+  ### Response:
+  - userId: Government Gateway user ID
+  - password: Password for the test user
+  - nino: National Insurance Number
+  - mtdItId: MTD Income Tax ID
+  - saUtr: Self Assessment UTR
+  
+  **Important**: Save the password immediately as it cannot be retrieved later!
+}

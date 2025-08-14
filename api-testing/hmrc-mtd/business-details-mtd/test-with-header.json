@@ -1,0 +1,93 @@
+[
+  {
+    "iterationIndex": 0,
+    "summary": {
+      "totalRequests": 1,
+      "passedRequests": 0,
+      "failedRequests": 1,
+      "skippedRequests": 0,
+      "errorRequests": 0,
+      "totalAssertions": 0,
+      "passedAssertions": 0,
+      "failedAssertions": 0,
+      "totalTests": 2,
+      "passedTests": 0,
+      "failedTests": 2,
+      "totalPreRequestTests": 0,
+      "passedPreRequestTests": 0,
+      "failedPreRequestTests": 0,
+      "totalPostResponseTests": 0,
+      "passedPostResponseTests": 0,
+      "failedPostResponseTests": 0
+    },
+    "results": [
+      {
+        "test": {
+          "filename": "01-list-all-businesses-test-only.bru"
+        },
+        "request": {
+          "method": "GET",
+          "url": "https://test-api.service.hmrc.gov.uk/individuals/business/details/NE101272A/list",
+          "headers": {
+            "Accept": "application/vnd.hmrc.2.0+json",
+            "Authorization": "Bearer ",
+            "Gov-Test-Scenario": "STATEFUL"
+          }
+        },
+        "response": {
+          "status": 401,
+          "statusText": "Unauthorized",
+          "headers": {
+            "content-type": "application/json",
+            "content-length": "89",
+            "connection": "keep-alive",
+            "date": "Wed, 13 Aug 2025 22:39:17 GMT",
+            "content-security-policy": "default-src 'self'",
+            "www-authenticate": "Bearer realm=\"HMRC API Platform\"",
+            "strict-transport-security": "max-age=31536000;",
+            "x-cache": "Error from cloudfront",
+            "via": "1.1 42323e32e163fd26fa6891b8cf7b1098.cloudfront.net (CloudFront)",
+            "x-amz-cf-pop": "LHR50-P6",
+            "x-amz-cf-id": "kRno5TWKmGyqRNE31_GEU6LyOuLiU2b30G7PEX4OALHx235ErthTNg=="
+          },
+          "data": {
+            "code": "INVALID_CREDENTIALS",
+            "message": "Invalid Authentication information provided"
+          },
+          "url": "https://test-api.service.hmrc.gov.uk/individuals/business/details/NE101272A/list",
+          "responseTime": 153
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [
+          {
+            "description": "Should return success",
+            "status": "fail",
+            "error": "expected 401 to be one of [ 200, 201, 204 ]",
+            "actual": 401,
+            "expected": [
+              200,
+              201,
+              204
+            ],
+            "uid": "hJ3g4i_qy-MmuvilGgkHE"
+          },
+          {
+            "description": "Should have correlation ID",
+            "status": "fail",
+            "error": "expected undefined to be a string",
+            "uid": "NUuYwBffieUySyjC6brIn"
+          }
+        ],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.171266125,
+        "name": "List All Businesses [test only]",
+        "path": "01-list-all-businesses-test-only",
+        "iterationIndex": 0
+      }
+    ]
+  }
+]

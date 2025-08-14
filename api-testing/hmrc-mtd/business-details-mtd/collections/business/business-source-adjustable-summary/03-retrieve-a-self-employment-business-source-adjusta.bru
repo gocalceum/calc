@@ -1,0 +1,81 @@
+meta {
+  name: Retrieve a Self-Employment Business Source Adjustable Summary
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/individuals/self-assessment/adjustable-summary/{{nino}}/self-employment/{{calculationId}}/{{taxYear}}
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.7.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Retrieve a Self-Employment Business Source Adjustable Summary
+  
+  This endpoint allows the user to request a specific Business Source Adjustable Summary. 
+A National Insurance number and Calculation id must be provided.
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.     
+ 
+| Header Value (Gov-Test-Scenario)          | Scenario                                                                                                                              |
+|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| N/A - DEFAULT                             | Simulates the scenario where no data is found.                                                                                        |
+| SELF_EMPLOYMENT_PROFIT                    | Simulates success response with all fields and netProfit.                                                                             |
+| DYNAMIC_SELF_EMPLOYMENT_PROFIT            | Simulates success response with all fields and netProfit.                   <br/><br/> See below for details about DYNAMIC scenarios. |            
+| SELF_EMPLOYMENT_LOSS                      | Simulates success response with all fields and netLoss.                                                                               |
+| DYNAMIC_SELF_EMPLOYMENT_LOSS              | Simulates success response with all fields and netLoss.                     <br/><br/> See below for details about DYNAMIC scenarios. |          
+| SELF_EMPLOYMENT_CONSOLIDATED              | Simulates success response with adjusted summary and consolidated expenses.                                                           |
+| DYNAMIC_SELF_EMPLOYMENT_CONSOLIDATED      | Simulates success response with adjusted summary and consolidated expenses. <br/><br/> See below for details about DYNAMIC scenarios. |                  
+| TRADING_ALLOWANCE                         | Simulates success response with adjusted summary and trading allowance.                                                               |
+| DYNAMIC_TRADING_ALLOWANCE                 | Simulates success response with adjusted summary and trading allowance.     <br/><br/> See below for details about DYNAMIC scenarios. |       
+| SELF_EMPLOYMENT_UNADJUSTED                | Simulates success response with unadjusted summary.                                                                                   |
+| DYNAMIC_SELF_EMPLOYMENT_UNADJUSTED        | Simulates success response with unadjusted summary.                         <br/><br/> See below for details about DYNAMIC scenarios. |                
+| SELF_EMPLOYMENT_STATUS_INVALID            | Simulates success response with summary status invalid.                                                                               |
+| DYNAMIC_SELF_EMPLOYMENT_STATUS_INVALID    | Simulates success response with summary status invalid.                     <br/><br/> See below for details about DYNAMIC scenarios. |                    
+| SELF_EMPLOYMENT_STATUS_SUPERSEDED         | Simulates success response with summary status superseded.                                                                            |
+| DYNAMIC_SELF_EMPLOYMENT_STATUS_SUPERSEDED | Simulates success response with summary status superseded.                  <br/><br/> See below for details about DYNAMIC scenarios. |                       
+| NOT_SELF_EMPLOYMENT                       | Simulates the scenario where the calculationId is not a self-employment.                                                              |
+| TAX_YEAR_NOT_SUPPORTED                    | Simulates the scenario where the tax year is not supported.                                                                           |
+| REQUEST_CANNOT_BE_FULFILLED               | Simulates the scenario where the request cannot be fulfilled for various reasons other than the ones triggering other errors.         |
+| STATEFUL                                  | Performs a stateful retrieve.                                                                                                         |
+| SELF_EMPLOYMENT_ZERO_ADJUSTMENTS          | Simulates the scenario where all income, expenses and additions have zero adjustments.                                                |
+
+In each case where a scenario is prefixed by DYNAMIC_, the following response values will change based on the values submitted in the request:
+- metadata
+  - calculationId
+  - taxYear
+  - nino
+  - requestedDateTime
+  - adjustedDateTime
+- inputs
+  - accountingPeriodStartDate
+  - accountingPeriodEndDate
+  - submissionPeriods
+    - startDate
+    - endDate
+
+For tax years prior to 2023-24, when the tax year is not supplied, these values will be based on a tax year of 2022-23.
+
+  
+  API: Business Source Adjustable Summary
+}

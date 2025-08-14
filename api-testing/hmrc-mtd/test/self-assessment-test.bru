@@ -1,0 +1,43 @@
+meta {
+  name: Test Self Assessment API
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{base_url}}/individuals/self-assessment/test-support/nino/{{test_user_nino}}
+  body: formUrlEncoded
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: Bearer 96720ff4eec36f7f2a03a5e0c81af5f6
+}
+
+script:pre-request {
+  // Use the saved access token
+  const token = bru.getVar('access_token');
+  if (!token) {
+    bru.setVar('access_token', '44899105a6e14925f943b1ad23d8c5f9');
+  }
+}
+
+tests {
+  test("Should be authorized", function() {
+    expect(res.status).to.not.equal(401);
+  });
+  
+  test("Should return data", function() {
+    expect(res.status).to.equal(200);
+  });
+}
+
+docs {
+  ## Test Self Assessment API
+  
+  This tests that your access token works with the HMRC API.
+  
+  If you get 401 Unauthorized, the token may have expired.
+  If you get 200 OK, everything is working!
+}

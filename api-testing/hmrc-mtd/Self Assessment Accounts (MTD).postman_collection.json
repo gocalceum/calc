@@ -1,0 +1,65 @@
+{
+	"info": {
+		"_postman_id": "38d03285-d2ff-4a62-9e58-b07a7dcd0027",
+		"name": "Self Assessment Accounts (MTD)",
+		"description": "The following group of endpoints is stateful in the Sandbox:\n* <a href=\"#tag/Coding-Out-Underpayments-and-Debts\">Coding Out Underpayments and Debts</a>\n* <a href=\"#tag/Coding-Out-Status\">Coding Out Status</a>\n\n# Send fraud prevention data\nHMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters. \n\n<div class=\"govuk-warning-text warning-icon-fix\">\n  <span class=\"govuk-warning-text__icon warning-icon-ui-fix\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You are required by law to submit header data for this API. This includes all associated APIs and endpoints.\n  </strong>\n</div>\n\n[Check the data you need to send](/guides/fraud-prevention/). You can also use the [Test API](/api-documentation/docs/api/service/txm-fph-validator-api/1.0) during initial development and as part of your quality assurance checks.\n\n# Mapping APIs to Self Assessment tax return forms\nSome parameters in this API map to box numbers in one or more Self Assessment tax return forms. To learn more and to download this mapping information as a CSV file, go to [income-tax-mtd-changelog/mapping](https://github.com/hmrc/income-tax-mtd-changelog?tab=readme-ov-file#mapping-apis-to-self-assessment-tax-return-forms) on GitHub.\n\n# Changelog\nYou can find the changelog in the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/#readme) on GitHub.\n\n# Support\n* Direct reports of bugs or errors in Production or Sandbox code, or queries about HMRC business functionality (such as how a specific field is used by HMRC or why it is needed) to the [Software Development Support Team (SDST)](https://developer.service.hmrc.gov.uk/developer/support).\n* Send queries or feedback related to the design of the APIs (including recommended changes) using the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/issues) GitHub page.\n* <a href=\"/contact/report-technical-problem?newTab=true&service=api-documentation-frontend\" target=\"_blank\">Is this page not working properly? (opens in new tab)</a>\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47400546",
+		"_collection_link": "https://bhalcrow78-9424527.postman.co/workspace/Calceum's-Workspace~bbfbc3d2-c64f-4fbc-881e-46243e3a45ec/collection/47400546-38d03285-d2ff-4a62-9e58-b07a7dcd0027?action=share&source=collection_link&creator=47400546"
+	},
+	"item": [
+		{
+			"name": "accounts",
+			"item": [
+				{
+					"name": "self-assessment",
+					"item": [
+						{
+							"name": "{nino}",
+							"item": [
+								{
+									"name": "charges",
+									"item": [
+										{
+											"name": "transactionId",
+											"item": []
+										},
+										{
+											"name": "chargeReference",
+											"item": []
+										}
+									]
+								},
+								{
+									"name": "{taxYear}",
+									"item": [
+										{
+											"name": "collection",
+											"item": [
+												{
+													"name": "tax-code",
+													"item": [
+														{
+															"name": "coding-out",
+															"item": []
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://test-api.service.hmrc.gov.uk"
+		}
+	]
+}

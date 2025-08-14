@@ -1,0 +1,49 @@
+meta {
+  name: Delete a Loss Claim
+  type: http
+  seq: 9
+}
+
+delete {
+  url: {{base_url}}/individuals/losses/{{nino}}/loss-claims/{{claimId}}/tax-year/{{taxYearClaimedFor}}
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.6.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Delete a Loss Claim
+  
+  This endpoint allows a developer to delete an existing Loss Claim.
+A National Insurance number, tax year and Claim ID must be provided.
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario) | Scenario                                       |
+| -------------------------------- | ---------------------------------------------- |
+| N/A - DEFAULT                    | Simulate success scenario                      |
+| NOT_FOUND                        | Simulates the scenario where no data is found. |
+| OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+| STATEFUL                         | Performs a stateful delete.                    |
+
+  
+  API: Individual Losses
+}

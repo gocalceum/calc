@@ -1,0 +1,25 @@
+meta {
+  name: Create a Checkpoint
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/individuals/self-assessment-test-support/vendor-state/checkpoints
+  body: json
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create a Checkpoint
+  
+  
+  
+  API: Self Assessment Test Support
+}

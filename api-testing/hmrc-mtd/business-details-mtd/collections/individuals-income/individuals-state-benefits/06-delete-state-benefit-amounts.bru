@@ -1,0 +1,24 @@
+meta {
+  name: Delete State Benefit Amounts
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{base_url}}/individuals/state-benefits/{nino}/{taxYear}/{benefitId}/amounts
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Delete State Benefit Amounts
+  
+  
+  
+  API: Individuals State Benefits
+}

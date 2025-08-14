@@ -1,0 +1,59 @@
+meta {
+  name: Create a Loss Claim
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{base_url}}/individuals/losses/{{nino}}/loss-claims
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.6.0+json
+  Content-Type: {{Content-Type}}
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create a Loss Claim
+  
+  This endpoint enables you to create a loss claim against an income source for a specific tax year. <Strong>Claims cannot be made until after the end of the accounting period.</Strong>
+A National Insurance number must be provided.
+
+<strong>
+  Note: carry-sideways-fhl type of loss claims for income sources uk-property-fhl and foreign-property-fhl-eea will not be supported from tax year 2025-26 onwards.
+</strong>
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario) | Scenario                                                                              |
+| -------------------------------- | ------------------------------------------------------------------------------------- |
+| N/A - DEFAULT                    | Simulates success response.                                                           |
+| NOT_FOUND                        | Simulates the scenario where no data is found.                                        |
+| DUPLICATE                        | Simulates the scenario where a duplicated value is found.                             |
+| ACCOUNTING_PERIOD_NOT_ENDED      | Simulates the scenario where the loss claim has been made too soon.                   |
+| NO_ACCOUNTING_PERIOD             | Simulates the scenario where there is no accounting period for the year of the claim. |
+| OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+| STATEFUL                         | Performs a stateful create.                                                           |
+| CSFHL_CLAIM_NOT_SUPPORTED        | Simulates the scenario where carry-sideways-fhl claim submitted for income sources "FHL Property - EEA" and "UK Property FHL".|
+
+  
+  API: Individual Losses
+}

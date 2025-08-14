@@ -1,0 +1,36 @@
+meta {
+  name: Delete a Checkpoint
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{base_url}}/individuals/self-assessment-test-support/vendor-state/checkpoints/{{checkpointId}}
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Delete a Checkpoint
+  
+  This endpoint enables you to delete a checkpoint created in the sandbox, specified with a ‘checkpointId’.
+
+Any checkpoint that is not deleted is automatically removed from the database 7 days after its creation.
+
+Checkpoints can only be deleted with this endpoint. Deleting data with the Delete Stateful Test Data endpoint will not delete checkpoints.
+
+**Note**: To prevent data loss or unexpected behaviour, the checkpoint delete should not be performed while other stateful checkpoint operations are in progress for the same National Insurance number.
+
+  
+  API: Self Assessment Test Support
+}

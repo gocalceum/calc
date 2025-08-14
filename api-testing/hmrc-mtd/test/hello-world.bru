@@ -1,0 +1,35 @@
+meta {
+  name: Hello World - Basic Test
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{base_url}}/hello/world
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+}
+
+tests {
+  test("Should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("Should return hello message", function() {
+    expect(res.body.message).to.equal("Hello World");
+  });
+}
+
+docs {
+  ## Hello World Test
+  
+  This is the simplest HMRC API test - no auth required.
+  Use this to verify basic connectivity.
+  
+  Expected response:
+  {
+    "message": "Hello World"
+  }
+}

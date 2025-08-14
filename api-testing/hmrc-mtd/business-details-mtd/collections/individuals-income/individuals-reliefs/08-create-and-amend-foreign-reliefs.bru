@@ -1,0 +1,25 @@
+meta {
+  name: Create and Amend Foreign Reliefs
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{base_url}}/individuals/reliefs/foreign/{nino}/{taxYear}
+  body: json
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create and Amend Foreign Reliefs
+  
+  
+  
+  API: Individuals Reliefs
+}

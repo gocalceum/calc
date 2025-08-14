@@ -1,0 +1,27 @@
+meta {
+  name: OAuth2 Authorize
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{auth_url}}/oauth/authorize?response_type=code&client_id={{client_id}}&scope=hello%20read%3Aself-assessment%20write%3Aself-assessment&redirect_uri={{redirect_uri}}&state={{$randomUUID}}
+}
+
+docs {
+  ## OAuth2 Authorization Endpoint
+  
+  This request initiates the OAuth2 authorization flow for HMRC.
+  
+  ### Process:
+  1. Open this URL in a browser
+  2. User logs in with Government Gateway credentials
+  3. User grants permissions to your application
+  4. HMRC redirects to your redirect_uri with an authorization code
+  5. Use the authorization code in the token exchange request
+  
+  ### Notes:
+  - The state parameter should be unique for each request for security
+  - Save the authorization code from the redirect URL
+  - Code expires in 10 minutes
+}

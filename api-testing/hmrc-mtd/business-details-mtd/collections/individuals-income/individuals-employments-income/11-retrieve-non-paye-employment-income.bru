@@ -1,0 +1,28 @@
+meta {
+  name: Retrieve Non-PAYE Employment Income
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{base_url}}/individuals/employments-income/non-paye/{nino}/{taxYear}
+  auth: none
+}
+
+query {
+  source: 
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Retrieve Non-PAYE Employment Income
+  
+  
+  
+  API: Individuals Employments Income
+}

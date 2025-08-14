@@ -1,0 +1,58 @@
+meta {
+  name: Retrieve a Brought Forward Loss
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{base_url}}/individuals/losses/{{nino}}/brought-forward-losses/{{lossId}}
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.6.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Retrieve a Brought Forward Loss
+  
+  This endpoint enables you to retrieve an existing brought forward loss amount. 
+A National Insurance number and Loss ID must be provided.
+
+<strong>
+  Note: Brought forward losses for the following 2 income sources will not be supported from tax year 2025-26 onwards:
+    <ul>
+      <li>uk-property-fhl</li>
+      <li>foreign-property-fhl-eea</li>
+    </ul>
+</strong>
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario) | Scenario                                                          |
+|----------------------------------|-------------------------------------------------------------------|
+| N/A - DEFAULT                    | Simulates success response where type of loss is Self-Employment. |
+| UK_PROPERTY_FHL                  | Simulates the scenario where type of loss is UK Property FHL.     |
+| FOREIGN_PROPERTY                 | Simulates the scenario where type of loss is Foreign Property.    |
+| NOT_FOUND                        | Simulates the scenario where no data is found.                    |
+| STATEFUL                         | Performs a stateful retrieve.                                     |
+
+  
+  API: Individual Losses
+}

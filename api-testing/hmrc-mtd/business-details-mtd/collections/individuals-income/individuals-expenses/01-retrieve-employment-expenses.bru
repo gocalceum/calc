@@ -1,0 +1,28 @@
+meta {
+  name: Retrieve Employment Expenses
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/individuals/expenses/employments/{nino}/{taxYear}
+  auth: none
+}
+
+query {
+  source: 
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Retrieve Employment Expenses
+  
+  
+  
+  API: Individuals Expenses
+}

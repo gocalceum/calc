@@ -1,0 +1,555 @@
+openapi: 3.0.3
+info:
+  title: Individuals Expenses (MTD)
+  description: "The following groups of endpoints are stateful in the Sandbox:\n*\
+    \ [Employment Expenses](#tag/Employment-Expenses)\n* [Other Expenses](#tag/Other-Expenses)\n\
+    \n# Send fraud prevention data\nHMRC monitors transactions to help protect your\
+    \ customers' confidential data from criminals and fraudsters. \n\n<div class=\"\
+    govuk-warning-text warning-icon-fix\">\n  <span class=\"govuk-warning-text__icon\
+    \ warning-icon-ui-fix\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\"\
+    >\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You are\
+    \ required by law to submit header data for this API. This includes all associated\
+    \ APIs and endpoints.\n  </strong>\n</div>\n\n[Check the data you need to send](/guides/fraud-prevention/).\
+    \ You can also use the [Test API](/api-documentation/docs/api/service/txm-fph-validator-api/1.0)\
+    \ during initial development and as part of your quality assurance checks.\n\n\
+    # Mapping APIs to Self Assessment tax return forms\nSome parameters in this API\
+    \ map to box numbers in one or more Self Assessment tax return forms. To learn\
+    \ more and to download this mapping information as a CSV file, go to [income-tax-mtd-changelog/mapping](https://github.com/hmrc/income-tax-mtd-changelog?tab=readme-ov-file#mapping-apis-to-self-assessment-tax-return-forms)\
+    \ on GitHub.\n\n# Changelog\nYou can find the changelog in the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/#readme)\
+    \ on GitHub.\n\n# Support\n\n* Direct reports of bugs or errors in Production\
+    \ or Sandbox code, or queries about HMRC business functionality (such as how a\
+    \ specific field is used by HMRC or why it is needed) to the the [Software Development\
+    \ Support Team (SDST)](https://developer.service.hmrc.gov.uk/developer/support).\n\
+    * Send queries or feedback related to the design of the APIs (including recommended\
+    \ changes) using the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/issues)\
+    \ GitHub page.\n* <a href=\"/contact/report-technical-problem?newTab=true&service=api-documentation-frontend\"\
+    \ target=\"_blank\">Is this page not working properly? (opens in new tab)</a>\n"
+  version: "3.0"
+servers:
+- url: https://test-api.service.hmrc.gov.uk
+  description: Sandbox
+- url: https://api.service.hmrc.gov.uk
+  description: Production
+tags:
+- name: Employment Expenses
+  description: Resources relating to an individual's employment expenses
+- name: Other Expenses
+  description: Resources relating to an individual's other expenses
+paths:
+  /individuals/expenses/employments/{nino}/{taxYear}:
+    get:
+      summary: Retrieve Employment Expenses
+      parameters:
+      - name: source
+        in: query
+        description: "Specifies the source of data to be returned. If source is not\
+          \ provided, the latest submitted values will be \nreturned.\n"
+        schema:
+          type: string
+          example: latest
+          enum:
+          - user
+          - hmrcHeld
+          - latest
+      security:
+      - User-Restricted:
+        - read:self-assessment
+    put:
+      summary: Create and Amend Employment Expenses
+      security:
+      - User-Restricted:
+        - write:self-assessment
+    delete:
+      summary: Delete Employment Expenses
+      security:
+      - User-Restricted:
+        - write:self-assessment
+  /individuals/expenses/employments/{nino}/{taxYear}/ignore:
+    post:
+      tags:
+      - Employment Expenses
+      summary: Ignore Employment Expenses
+      description: "This endpoint enables you to ignore HMRC-provided employment expenses\
+        \ for this user. This endpoint can only be used \nafter the tax year has ended.\
+        \ A National Insurance number and tax year must be provided.\n\nIgnoring an\
+        \ expense will remove any amended expenses and add the \"dateIgnored\" flag\
+        \ to HMRC-provided expenses.\n\n### Test data\nScenario simulation using Gov-Test-Scenario\
+        \ headers is only available in the sandbox environment.\n\n| Header Value\
+        \ (Gov-Test-Scenario)        | Scenario                                  \
+        \                                                      |\n|-----------------------------------------|-------------------------------------------------------------------------------------------------|\n\
+        | N/A - DEFAULT                           | Simulates success response.  \
+        \                                                                   |\n| TAX_YEAR_NOT_ENDED\
+        \                      | Simulates the scenario where the submission is for\
+        \ a tax year that has not ended.               |\n| NOT_FOUND            \
+        \                   | Scenario to simulate not found error.              \
+        \                                             |\n| OUTSIDE_AMENDMENT_WINDOW\
+        \                | Simulates the scenario where request cannot be completed\
+        \ as it is outside the amendment window. |\n"
+      parameters:
+      - name: nino
+        in: path
+        description: |
+          National Insurance number, in the format `AA999999A`
+        required: true
+        schema:
+          type: string
+          example: TC663795B
+      - name: taxYear
+        in: path
+        description: |
+          The tax year to which the data applies. For example: 2022-23. The start year and end year must not span two tax years. The minimum tax year is 2022-23. No gaps are allowed, for example, 2022-24 is not valid. (The minimum tax year in Sandbox is 2021-22.)
+        required: true
+        schema:
+          pattern: "^\\d{4}-\\d{2}$"
+          type: string
+          example: 2022-23
+      - name: Accept
+        in: header
+        description: |
+          Specifies the response format and the version of the API to be used.
+        required: true
+        schema:
+          type: string
+          enum:
+          - application/vnd.hmrc.3.0+json
+      - name: Authorization
+        in: header
+        description: |
+          An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+        required: true
+        schema:
+          type: string
+          example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+      - name: Gov-Test-Scenario
+        in: header
+        description: |
+          Only in sandbox environment. See Test Data table for all header values.
+        required: false
+        schema:
+          type: string
+          example: "-"
+      responses:
+        "204":
+          description: Success(No Content)
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/individual-expenses-api
+        "400":
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/individual-expenses-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                FORMAT_NINO:
+                  description: The format of the supplied NINO field is not valid.
+                  value:
+                    code: FORMAT_NINO
+                    message: The provided NINO is invalid
+                FORMAT_TAX_YEAR:
+                  description: The format of the supplied taxYear field is not valid.
+                  value:
+                    code: FORMAT_TAX_YEAR
+                    message: The provided tax year is invalid
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: Tax year range invalid. A tax year range of one year
+                    is required.
+                  value:
+                    code: RULE_TAX_YEAR_RANGE_INVALID
+                    message: Tax year range invalid. A tax year range of one year
+                      is required
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported.
+                    Either the tax year specified is before the minimum tax year value,
+                    or it is after the maximum tax year value.
+                  value:
+                    code: RULE_TAX_YEAR_NOT_SUPPORTED
+                    message: The tax year specified does not lie within the supported
+                      range
+                RULE_TAX_YEAR_NOT_ENDED:
+                  description: The submission has been made before the Tax year it
+                    relates to has ended.
+                  value:
+                    code: RULE_TAX_YEAR_NOT_ENDED
+                    message: Tax year not ended
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: "The request did not match any available Sandbox data.\
+                    \ Check that the supplied Gov-Test-Scenario is correct for \n\
+                    this endpoint version. This error will only be returned in the\
+                    \ Sandbox environment.\n"
+                  value:
+                    code: RULE_INCORRECT_GOV_TEST_SCENARIO
+                    message: The supplied Gov-Test-Scenario is not valid
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: |
+                    The request cannot be completed as you are outside the amendment window.
+                  value:
+                    code: RULE_OUTSIDE_AMENDMENT_WINDOW
+                    message: You are outside the amendment window
+        "403":
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/individual-expenses-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because:
+                    the client is not subscribed to MTD, the agent is not subscribed to Agent Services,
+                    or the client has not authorised the agent to act on their behalf.
+                  value:
+                    code: CLIENT_OR_AGENT_NOT_AUTHORISED
+                    message: The client and/or agent is not authorised
+        "404":
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              required: true
+              schema:
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+            Deprecation:
+              description: |
+                The deprecation date/time for this endpoint.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 01 Jan 2023 23:59:59 GMT"
+            Sunset:
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              required: false
+              schema:
+                type: string
+                example: "Sun, 02 Jul 2023 23:59:59 GMT"
+            Link:
+              description: |
+                See the API documentation:
+              required: false
+              schema:
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/individual-expenses-api
+          content:
+            application/json:
+              schema:
+                required:
+                - code
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: The error code
+                  message:
+                    type: string
+                    description: The error message
+                description: Error Response
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: The supplied expenses could not be found.
+                  value:
+                    code: MATCHING_RESOURCE_NOT_FOUND
+                    message: Matching resource not found
+      security:
+      - User-Restricted:
+        - write:self-assessment
+  /individuals/expenses/other/{nino}/{taxYear}:
+    get:
+      summary: Retrieve Other Expenses
+      security:
+      - User-Restricted:
+        - read:self-assessment
+    put:
+      summary: Create and Amend Other Expenses
+      security:
+      - User-Restricted:
+        - write:self-assessment
+    delete:
+      summary: Delete Other Expenses
+      security:
+      - User-Restricted:
+        - write:self-assessment
+components:
+  schemas:
+    error-response:
+      required:
+      - code
+      type: object
+      properties:
+        code:
+          type: string
+          description: The error code
+        message:
+          type: string
+          description: The error message
+      description: Error Response
+  parameters:
+    source:
+      name: source
+      in: query
+      description: "Specifies the source of data to be returned. If source is not\
+        \ provided, the latest submitted values will be \nreturned.\n"
+      schema:
+        type: string
+        example: latest
+        enum:
+        - user
+        - hmrcHeld
+        - latest
+    nino:
+      name: nino
+      in: path
+      description: |
+        National Insurance number, in the format `AA999999A`
+      required: true
+      schema:
+        type: string
+        example: TC663795B
+    taxYear:
+      name: taxYear
+      in: path
+      description: |
+        The tax year to which the data applies. For example: 2022-23. The start year and end year must not span two tax years. The minimum tax year is 2022-23. No gaps are allowed, for example, 2022-24 is not valid. (The minimum tax year in Sandbox is 2021-22.)
+      required: true
+      schema:
+        pattern: "^\\d{4}-\\d{2}$"
+        type: string
+        example: 2022-23
+    acceptHeader:
+      name: Accept
+      in: header
+      description: |
+        Specifies the response format and the version of the API to be used.
+      required: true
+      schema:
+        type: string
+        enum:
+        - application/vnd.hmrc.3.0+json
+    authorizationWriteScopeHeader:
+      name: Authorization
+      in: header
+      description: |
+        An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+      required: true
+      schema:
+        type: string
+        example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+    testScenarioHeader:
+      name: Gov-Test-Scenario
+      in: header
+      description: |
+        Only in sandbox environment. See Test Data table for all header values.
+      required: false
+      schema:
+        type: string
+        example: "-"
+  examples:
+    formatNino:
+      description: The format of the supplied NINO field is not valid.
+      value:
+        code: FORMAT_NINO
+        message: The provided NINO is invalid
+    formatTaxYear:
+      description: The format of the supplied taxYear field is not valid.
+      value:
+        code: FORMAT_TAX_YEAR
+        message: The provided tax year is invalid
+    ruleTaxYearRangeInvalid:
+      description: Tax year range invalid. A tax year range of one year is required.
+      value:
+        code: RULE_TAX_YEAR_RANGE_INVALID
+        message: Tax year range invalid. A tax year range of one year is required
+    ruleTaxYearNotSupported:
+      description: |
+        The specified tax year is not supported.
+        Either the tax year specified is before the minimum tax year value,
+        or it is after the maximum tax year value.
+      value:
+        code: RULE_TAX_YEAR_NOT_SUPPORTED
+        message: The tax year specified does not lie within the supported range
+    ruleTaxYearNotEnded:
+      description: The submission has been made before the Tax year it relates to
+        has ended.
+      value:
+        code: RULE_TAX_YEAR_NOT_ENDED
+        message: Tax year not ended
+    ruleIncorrectGovTestScenario:
+      description: "The request did not match any available Sandbox data. Check that\
+        \ the supplied Gov-Test-Scenario is correct for \nthis endpoint version. This\
+        \ error will only be returned in the Sandbox environment.\n"
+      value:
+        code: RULE_INCORRECT_GOV_TEST_SCENARIO
+        message: The supplied Gov-Test-Scenario is not valid
+    ruleOutsideAmendmentWindow:
+      description: |
+        The request cannot be completed as you are outside the amendment window.
+      value:
+        code: RULE_OUTSIDE_AMENDMENT_WINDOW
+        message: You are outside the amendment window
+    clientOrAgentNotAuthorised:
+      description: |
+        The client and/or agent is not authorised. This is normally because:
+        the client is not subscribed to MTD, the agent is not subscribed to Agent Services,
+        or the client has not authorised the agent to act on their behalf.
+      value:
+        code: CLIENT_OR_AGENT_NOT_AUTHORISED
+        message: The client and/or agent is not authorised
+    notFoundExpenses:
+      description: The supplied expenses could not be found.
+      value:
+        code: MATCHING_RESOURCE_NOT_FOUND
+        message: Matching resource not found
+  headers:
+    correlationId:
+      description: |
+        Unique ID for operation tracking
+        String, 36 characters.
+      required: true
+      schema:
+        type: string
+        example: c75f40a6-a3df-4429-a697-471eeec46435
+    deprecationHeader:
+      description: |
+        The deprecation date/time for this endpoint.
+      required: false
+      schema:
+        type: string
+        example: "Sun, 01 Jan 2023 23:59:59 GMT"
+    sunsetHeader:
+      description: |
+        The earliest date/time this endpoint will become unavailable after deprecation.
+      required: false
+      schema:
+        type: string
+        example: "Sun, 02 Jul 2023 23:59:59 GMT"
+    linkHeader:
+      description: |
+        See the API documentation:
+      required: false
+      schema:
+        type: string
+        example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/individual-expenses-api
+  securitySchemes:
+    User-Restricted:
+      type: oauth2
+      description: "HMRC supports OAuth 2.0 for authenticating [User-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints)\
+        \ API requests"
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
+          scopes:
+            write:self-assessment: Grant write access
+            read:self-assessment: Grant read access

@@ -1,0 +1,64 @@
+meta {
+  name: List All Businesses [test only]
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/individuals/business/details/{{nino}}/list
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.2.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Only add Gov-Test-Scenario header if it has a value
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+    console.log('Using Gov-Test-Scenario:', scenario);
+  } else {
+    console.log('No Gov-Test-Scenario header (using default behavior)');
+  }
+  
+  // Debug: Check if access token is being resolved
+  const token = bru.getVar('access_token');
+  console.log('Access token available:', token ? 'Yes' : 'No');
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+  
+  test("Should have correlation ID", function() {
+    expect(res.headers["x-correlationid"]).to.be.a("string");
+  });
+}
+
+docs {
+  ## List All Businesses [test only]
+  
+  This endpoint allows a developer to retrieve all details of a user's business income sources. The unique account 
+reference (National Insurance number) must be provided.
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.    
+
+| Header Value (Gov-Test-Scenario) | Scenario                                                                                         |
+|----------------------------------|--------------------------------------------------------------------------------------------------|
+| N/A - DEFAULT                    | Simulate a successful response with a self-employment business.                                  |
+| PROPERTY                         | Simulate a successful response with a uk-property business.                                      |
+| FOREIGN_PROPERTY                 | Simulate a successful response with a foreign-property business.                                 |                                                                |
+| BUSINESS_AND_PROPERTY            | Simulate a successful response with a self-employment, uk-property and foreign-property business.|
+| UNSPECIFIED                      | Simulate a successful response with a property-unspecified business.                             |
+| NOT_FOUND                        | Simulates the scenario where no data is found.                                                   |
+| STATEFUL                         | Performs a stateful list.                                                                        |
+
+  
+  ### Path Parameters
+  - nino: {{nino}}
+}

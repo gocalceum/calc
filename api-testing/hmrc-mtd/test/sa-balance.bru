@@ -1,0 +1,29 @@
+meta {
+  name: Get SA Balance
+  type: http
+  seq: 13
+}
+
+get {
+  url: {{base_url}}/accounts/self-assessment/{{test_user_nino}}/balance
+}
+
+headers {
+  Accept: application/vnd.hmrc.4.0+json
+  Authorization: Bearer 96720ff4eec36f7f2a03a5e0c81af5f6
+}
+
+script:pre-request {
+  const token = bru.getVar('access_token');
+  const nino = bru.getProcessEnv('TEST_USER_NINO');
+  console.log('Using access token:', token);
+  console.log('Using NINO:', nino);
+  console.log('Full URL will be: https://test-api.service.hmrc.gov.uk/accounts/self-assessment/' + nino + '/balance');
+}
+
+docs {
+  ## Get Self Assessment Balance
+  
+  Gets the current balance for the test user's Self Assessment account.
+  This is a v4.0 endpoint.
+}

@@ -1,0 +1,25 @@
+meta {
+  name: Amend a Foreign Property Income & Expenses Period Summary
+  type: http
+  seq: 24
+}
+
+put {
+  url: {{base_url}}/individuals/business/property/foreign/{nino}/{businessId}/period/{taxYear}/{submissionId}
+  body: json
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Amend a Foreign Property Income & Expenses Period Summary
+  
+  
+  
+  API: Property Business
+}

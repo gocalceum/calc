@@ -1,0 +1,18 @@
+{
+  "version": "1",
+  "name": "HMRC MTD APIs",
+  "type": "collection",
+  "ignore": ["node_modules", ".git", "converted", "*.local"],
+  "scripts": {
+    "moduleWhitelist": ["crypto", "axios", "chai"],
+    "filesystemAccess": {
+      "allow": true
+    }
+  },
+  "preRequest": {
+    "script": "// Global pre-request script\n// Check and refresh OAuth2 token if needed\nconst tokenExpiry = bru.getVar('token_expiry');\nif (tokenExpiry && Date.now() > tokenExpiry - 60000) {\n  console.log('Token expiring soon, refreshing...');\n  // Trigger refresh token request if needed\n}"
+  },
+  "postResponse": {
+    "script": "// Global post-response script\n// Auto-save OAuth2 tokens\nif(req.getAuthMode && req.getAuthMode() == 'oauth2' && res.body.access_token) {\n    bru.setVar('access_token', res.body.access_token);\n    if(res.body.refresh_token) {\n        bru.setVar('refresh_token', res.body.refresh_token);\n    }\n    bru.setVar('token_expiry', Date.now() + (res.body.expires_in * 1000));\n    console.log('OAuth2 tokens saved successfully');\n}"
+  }
+}

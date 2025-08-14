@@ -1,0 +1,30 @@
+meta {
+  name: Acknowledge a HMRC Self Assessment Assist Report
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/individuals/self-assessment/assist/reports/acknowledge/{{nino}}/{{reportId}}/{{correlationId}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{access_token}}
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Acknowledge a HMRC Self Assessment Assist Report
+  
+  This endpoint allows a developer to acknowledge that the given report has been read by the customer or agent.
+
+  
+  API: Self Assessment Assist
+}

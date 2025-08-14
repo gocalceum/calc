@@ -1,0 +1,25 @@
+meta {
+  name: Create and Amend a UK Property Cumulative Period Summary
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{base_url}}/individuals/business/property/uk/{nino}/{businessId}/cumulative/{taxYear}
+  body: json
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create and Amend a UK Property Cumulative Period Summary
+  
+  
+  
+  API: Property Business
+}

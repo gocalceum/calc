@@ -1,0 +1,25 @@
+meta {
+  name: Create or Amend High Income Child Benefit Charge Submission [test only]
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{base_url}}/individuals/charges/high-income-child-benefit/{nino}/{taxYear}
+  body: json
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create or Amend High Income Child Benefit Charge Submission [test only]
+  
+  
+  
+  API: Individuals Charges
+}

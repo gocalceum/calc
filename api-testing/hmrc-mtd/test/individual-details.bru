@@ -1,0 +1,29 @@
+meta {
+  name: Get Individual Details
+  type: http
+  seq: 16
+}
+
+get {
+  url: {{base_url}}/individuals/details/{{test_user_nino}}/self-assessment
+}
+
+headers {
+  Accept: application/vnd.hmrc.2.0+json
+  Authorization: Bearer 96720ff4eec36f7f2a03a5e0c81af5f6
+}
+
+script:pre-request {
+  const token = bru.getVar('access_token');
+  const nino = bru.getProcessEnv('TEST_USER_NINO');
+  console.log('Using access token:', token);
+  console.log('Using NINO:', nino);
+  console.log('Full URL: https://test-api.service.hmrc.gov.uk/individuals/details/' + nino + '/self-assessment');
+}
+
+docs {
+  ## Get Individual Details for Self Assessment
+  
+  Gets the individual's details and MTD status.
+  This uses the Self Assessment Individual Details API v2.0.
+}

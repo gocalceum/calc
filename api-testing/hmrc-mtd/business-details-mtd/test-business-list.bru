@@ -1,0 +1,27 @@
+meta {
+  name: Test Business List
+  type: http
+  seq: 10
+}
+
+get {
+  url: https://test-api.service.hmrc.gov.uk/individuals/business/details/NE101272A/list
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.2.0+json
+  Authorization: Bearer 96720ff4eec36f7f2a03a5e0c81af5f6
+}
+
+tests {
+  test("Check response", function() {
+    console.log('Status:', res.status);
+    console.log('Response:', JSON.stringify(res.body, null, 2));
+  });
+}
+
+docs {
+  ## Test Business List
+  Direct test with hardcoded values
+}

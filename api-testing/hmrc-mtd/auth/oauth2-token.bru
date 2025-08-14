@@ -1,0 +1,82 @@
+meta {
+  name: OAuth2 Token Exchange
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/oauth/token
+  body: formUrlEncoded
+  auth: none
+}
+
+headers {
+  Content-Type: application/x-www-form-urlencoded
+}
+
+body:form-urlencoded {
+  grant_type: authorization_code
+  client_id: {{client_id}}
+  client_secret: {{client_secret}}
+  code: {{authorization_code}}
+  redirect_uri: {{redirect_uri}}
+}
+
+script:pre-request {
+  // Set the authorization code from the OAuth callback
+  bru.setVar('authorization_code', '310eef97-bfdf-4ba0-8483-b657a18695f9');
+}
+
+script:post-response {
+  // Save tokens to variables
+  if (res.body.access_token) {
+    bru.setVar('access_token', res.body.access_token);
+    console.log('Access token saved');
+  }
+  
+  if (res.body.refresh_token) {
+    bru.setVar('refresh_token', res.body.refresh_token);
+    console.log('Refresh token saved');
+  }
+  
+  if (res.body.expires_in) {
+    const expiryTime = Date.now() + (res.body.expires_in * 1000);
+    bru.setVar('token_expiry', expiryTime);
+    console.log('Token expires at:', new Date(expiryTime).toISOString());
+  }
+}
+
+tests {
+  test("Should receive access token", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body.access_token).to.be.a('string');
+  });
+  
+  test("Should receive refresh token", function() {
+    expect(res.body.refresh_token).to.be.a('string');
+  });
+  
+  test("Should receive token expiry", function() {
+    expect(res.body.expires_in).to.be.a('number');
+  });
+}
+
+docs {
+  ## OAuth2 Token Exchange
+  
+  Exchange the authorization code for access and refresh tokens.
+  
+  ### Prerequisites:
+  - You must have a valid authorization code from the authorize endpoint
+  - Code must be used within 10 minutes
+  
+  ### Response:
+  - access_token: Bearer token for API requests
+  - refresh_token: Token to refresh access when it expires
+  - expires_in: Seconds until access token expires (typically 4 hours)
+  
+  ### Important:
+  - Store tokens securely
+  - Access tokens expire in 4 hours
+  - Use refresh token to get new access token
+}

@@ -1,0 +1,51 @@
+meta {
+  name: Create Marriage Allowance
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/individuals/disclosures/marriage-allowance/{{nino}}
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.2.0+json
+  Authorization: Bearer {{access_token}}
+  Content-Type: {{Content-Type}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create Marriage Allowance
+  
+  This endpoint allows the customer to transfer up to £1,260 of their personal allowance to their spouse or civil 
+partner. A National Insurance Number must be provided.
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario)      | Scenario                                                                                           |
+|---------------------------------------|----------------------------------------------------------------------------------------------------|
+| N/A - DEFAULT                         | Simulates success response.                                                                        |
+| DECEASED_RECIPIENT                    | Simulates the scenario in which the supplied spouse or civil partner has been flagged as deceased. |
+| CLAIM_ALREADY_EXISTS                  | Simulates the scenario in which a Marriage Allowance claim already exists for the supplied NINO.   |
+| INVALID_REQUEST                       | Simulates the scenario in which a request cannot be made as the current NINO supplied is invalid.  |
+
+  
+  API: Individuals Disclosures
+}

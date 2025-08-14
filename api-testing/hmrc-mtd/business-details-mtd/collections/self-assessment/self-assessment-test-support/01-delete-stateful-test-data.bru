@@ -1,0 +1,33 @@
+meta {
+  name: Delete Stateful Test Data
+  type: http
+  seq: 1
+}
+
+delete {
+  url: {{base_url}}/individuals/self-assessment-test-support/vendor-state
+  auth: none
+}
+
+query {
+  nino: 
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Delete Stateful Test Data
+  
+  
+  
+  API: Self Assessment Test Support
+}

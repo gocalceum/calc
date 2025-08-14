@@ -1,0 +1,35 @@
+meta {
+  name: Create and Amend Test ITSA Status
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{base_url}}/individuals/self-assessment-test-support/itsa-status/{{nino}}/{{taxYear}}
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create and Amend Test ITSA Status
+  
+  This endpoint enables you to create and amend a test ITSA status for a specified customer for use within the sandbox environment. The ITSA status provided is used to validate periodic and annual submissions for the customer's income sources.
+
+A National Insurance number and tax year must be provided.
+
+Any test ITSA status is automatically purged from the database 7 days after its creation.
+
+  
+  API: Self Assessment Test Support
+}

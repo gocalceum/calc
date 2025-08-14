@@ -1,0 +1,54 @@
+meta {
+  name: Retrieve a Loss Claim
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{base_url}}/individuals/losses/{{nino}}/loss-claims/{{claimId}}
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.6.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Retrieve a Loss Claim
+  
+  This endpoint allows a developer to retrieve the detail of an existing loss claim.
+A National Insurance Number and Claim ID must be provided.
+
+<strong>
+  Note: carry-sideways-fhl type of loss claims for income sources uk-property-fhl and foreign-property-fhl-eea will not be supported from tax year 2025-26 onwards.
+</strong>
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario) | Scenario                                                                                     |
+| -------------------------------- | -------------------------------------------------------------------------------------------- |
+| N/A - DEFAULT                    | Simulates successful self-employment response where typeOfClaim is "carry-forward".          |
+| UK_PROPERTY                      | Simulates successful uk-property response where typeOfClaim is "carry-sideways-fhl".         |
+| FOREIGN_PROPERTY                 | Simulates successful foreign-property response where typeOfClaim is "carry-sideways".        |
+| NOT_FOUND                        | Simulates the scenario where no data is found.                                               |
+| STATEFUL                         | Performs a stateful retrieve.                                                                |
+
+  
+  API: Individual Losses
+}

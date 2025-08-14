@@ -1,0 +1,27 @@
+meta {
+  name: SA Balance with Test Scenario
+  type: http
+  seq: 17
+}
+
+get {
+  url: {{base_url}}/accounts/self-assessment/AA999999A/balance
+}
+
+headers {
+  Accept: application/vnd.hmrc.4.0+json
+  Authorization: Bearer {{access_token}}
+  Gov-Test-Scenario: HAPPY_PATH_1
+}
+
+docs {
+  ## Self Assessment Balance with Test Scenario
+  
+  Uses Gov-Test-Scenario header to test different responses.
+  Uses test NINO AA999999A which is a standard test value.
+  
+  Common test scenarios:
+  - HAPPY_PATH_1: Returns successful response with test data
+  - NOT_FOUND: Returns 404
+  - SERVER_ERROR: Returns 500
+}

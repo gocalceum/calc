@@ -1,0 +1,52 @@
+meta {
+  name: Retrieve ITSA Status
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/individuals/person/itsa-status/{{nino}}/{{taxYear}}
+  auth: none
+}
+
+query {
+  futureYears: 
+  history: 
+}
+
+headers {
+  Accept: application/vnd.hmrc.2.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Retrieve ITSA Status
+  
+  This endpoint enables you to retrieve an ITSA status for an HMRC customer for a specified tax year, and optionally future years after that tax year. A National Insurance number and tax year must be provided. An ITSA status is always available for each tax year from the year the customer signed up for MTD to the current year. Availability of status after the current year varies, depending on factors such as the customer's annual return submissions.
+
+### Test data
+Scenario simulations using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario)        | Scenario                                                                                         |
+|-----------------------------------------|--------------------------------------------------------------------------------------------------|
+| N/A - DEFAULT                           | Simulates success response.                                                                      |
+| NOT_FOUND                               | Simulates the scenario where no data is found.                                                   |
+| STATEFUL                                | Performs a stateful retrieve.                                                                    |
+
+  
+  API: Self Assessment Individual Details
+}

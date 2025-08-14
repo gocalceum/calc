@@ -1,0 +1,30 @@
+meta {
+  name: Get SA Transactions
+  type: http
+  seq: 14
+}
+
+get {
+  url: {{base_url}}/accounts/self-assessment/{{test_user_nino}}/transactions?from=2023-04-06&to=2024-04-05
+}
+
+headers {
+  Accept: application/vnd.hmrc.4.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  const token = bru.getVar('access_token');
+  const nino = bru.getProcessEnv('TEST_USER_NINO');
+  console.log('Using access token:', token);
+  console.log('Using NINO:', nino);
+  console.log('Full URL will be: https://test-api.service.hmrc.gov.uk/accounts/self-assessment/' + nino + '/transactions?from=2023-04-06&to=2024-04-05');
+}
+
+docs {
+  ## Get Self Assessment Transactions
+  
+  Gets transactions for the test user's Self Assessment account.
+  Date range: 2023-04-06 to 2024-04-05 (tax year 2023/24)
+  This is a v4.0 endpoint.
+}

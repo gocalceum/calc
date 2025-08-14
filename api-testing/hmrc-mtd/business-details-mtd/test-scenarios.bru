@@ -1,0 +1,56 @@
+meta {
+  name: Test Different Scenarios
+  type: http
+  seq: 20
+}
+
+get {
+  url: https://test-api.service.hmrc.gov.uk/individuals/business/details/NE101272A/list
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.2.0+json
+  Authorization: Bearer 96720ff4eec36f7f2a03a5e0c81af5f6
+}
+
+script:pre-request {
+  // Test different Gov-Test-Scenario values
+  // Uncomment the scenario you want to test:
+  
+  // Default - self-employment business
+  // req.setHeader('Gov-Test-Scenario', 'DEFAULT');
+  
+  // UK Property business
+  req.setHeader('Gov-Test-Scenario', 'PROPERTY');
+  
+  // Foreign property business
+  // req.setHeader('Gov-Test-Scenario', 'FOREIGN_PROPERTY');
+  
+  // All types of businesses
+  // req.setHeader('Gov-Test-Scenario', 'BUSINESS_AND_PROPERTY');
+  
+  // No header - use actual test data
+  console.log('Testing without Gov-Test-Scenario header (actual test data)');
+}
+
+tests {
+  test("Check response", function() {
+    console.log('Status:', res.status);
+    console.log('Response:', JSON.stringify(res.body, null, 2));
+    expect(res.status).to.equal(200);
+  });
+}
+
+docs {
+  ## Test Different Gov-Test-Scenario Values
+  
+  Available scenarios:
+  - No header / DEFAULT: Self-employment business
+  - PROPERTY: UK property business  
+  - FOREIGN_PROPERTY: Foreign property business
+  - BUSINESS_AND_PROPERTY: All business types
+  - UNSPECIFIED: Property-unspecified business
+  - NOT_FOUND: No data found
+  - STATEFUL: Stateful list (may require special auth)
+}

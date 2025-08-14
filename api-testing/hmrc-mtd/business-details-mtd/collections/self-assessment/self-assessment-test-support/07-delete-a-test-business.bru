@@ -1,0 +1,30 @@
+meta {
+  name: Delete a Test Business
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{base_url}}/individuals/self-assessment-test-support/business/{{nino}}/{{businessId}}
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Delete a Test Business
+  
+  This endpoint allows a developer to delete a test business that they previously created.
+
+  
+  API: Self Assessment Test Support
+}

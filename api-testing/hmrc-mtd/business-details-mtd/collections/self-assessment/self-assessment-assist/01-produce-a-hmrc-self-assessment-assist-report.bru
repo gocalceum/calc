@@ -1,0 +1,31 @@
+meta {
+  name: Produce a HMRC Self Assessment Assist Report
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/individuals/self-assessment/assist/reports/{{nino}}/{{taxYear}}/{{calculationId}}
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Produce a HMRC Self Assessment Assist Report
+  
+  This endpoint allows a developer to request a HMRC Assist report to be generated for a customer or their agent
+
+  
+  API: Self Assessment Assist
+}

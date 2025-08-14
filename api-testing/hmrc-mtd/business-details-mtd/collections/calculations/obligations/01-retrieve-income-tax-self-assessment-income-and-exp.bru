@@ -1,0 +1,60 @@
+meta {
+  name: Retrieve Income Tax (Self Assessment) Income and Expenditure Obligations
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/obligations/details/{{nino}}/income-and-expenditure
+  auth: none
+}
+
+query {
+  typeOfBusiness: 
+  businessId: 
+  fromDate: 
+  toDate: 
+  status: 
+}
+
+headers {
+  Accept: application/vnd.hmrc.3.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Retrieve Income Tax (Self Assessment) Income and Expenditure Obligations
+  
+  This endpoint allows a developer to retrieve obligations for a user's business income sources. The account identifier (National Insurance number) must be provided.
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario)      | Scenario                                                                               |
+|---------------------------------------|----------------------------------------------------------------------------------------|
+| N/A - DEFAULT                         | Simulates a success response.                                                          |
+| OPEN                                  | Simulates a success response with an open obligation. <br/><br/>For a response with a self-employment business, use businessId: <br/> • XBIS12345678903 <br/>For a response with a UK property business, use businessId: <br/> • XPIS12345678903 <br/>For a response with a foreign property business, use businessId: <br/> • XFIS12345678903 |
+| FULFILLED                             | Simulates a success response with a fulfilled obligation. <br/><br/>For a response with a self-employment business, use businessId: <br/> • XBIS12345678902 <br/>For a response with a UK property business, use businessId: <br/> • XPIS12345678902 <br/>For a response with a foreign property business, use businessId: <br/> • XFIS12345678902 |
+| INSOLVENT_TRADER                      | Simulates a scenario where the remote endpoint indicates that the trader is insolvent. |
+| NOT_FOUND                             | Simulates a scenario where no data is found.                                           |
+| NO_OBLIGATIONS_FOUND                  | Simulates a scenario where no obligations are found.                                   |
+| DYNAMIC                               | The following response values will change to correspond to the values submitted in the request: <br/> • fromDate <br/> • toDate <br/> • status (open or fulfilled) <br/><br/>For a response with a self-employment business, use businessId: <br/> • XBIS12345678901 <br/>For a response with a UK property business, use businessId: <br/> • XPIS12345678901 <br/>For a response with a foreign property business, use businessId: <br/> • XFIS12345678901 |
+| CUMULATIVE                            | Simulates a success response with cumulative quarterly updates.                        |
+
+  
+  API: Obligations
+}

@@ -1,0 +1,49 @@
+meta {
+  name: OAuth2 Complete Test
+  type: http
+  seq: 3
+}
+
+post {
+  url: https://test-api.service.hmrc.gov.uk/oauth/token
+  body: formUrlEncoded
+  auth: none
+}
+
+headers {
+  Content-Type: application/x-www-form-urlencoded
+  Accept: application/json
+}
+
+body:form-urlencoded {
+  grant_type: authorization_code
+  client_id: iQetMYZLL2Gq9dmqFTcJGSVMLpxZ
+  client_secret: 3ed60b21-3e72-409e-8fb2-d66a8edb0dc6
+  code: c22aa4416c5a4480a2f5e7ddf05f7ce6
+  redirect_uri: https://oauth.pstmn.io/v1/callback
+}
+
+script:pre-request {
+  console.log('Authorization URL to use:');
+  console.log('https://test-www.tax.service.gov.uk/oauth/authorize?response_type=code&client_id=iQetMYZLL2Gq9dmqFTcJGSVMLpxZ&scope=hello read:self-assessment write:self-assessment&redirect_uri=https://oauth.pstmn.io/v1/callback&state=test123');
+}
+
+script:post-response {
+  if (res.body.access_token) {
+    bru.setVar('access_token', res.body.access_token);
+    bru.setVar('refresh_token', res.body.refresh_token);
+    console.log('SUCCESS! Tokens saved.');
+    console.log('Access Token:', res.body.access_token);
+  }
+}
+
+docs {
+  ## Complete OAuth2 Test
+  
+  1. First, use this exact URL to authorize (includes hello scope):
+  https://test-www.tax.service.gov.uk/oauth/authorize?response_type=code&client_id=iQetMYZLL2Gq9dmqFTcJGSVMLpxZ&scope=hello read:self-assessment write:self-assessment&redirect_uri=https://oauth.pstmn.io/v1/callback&state=test123
+  
+  2. Login and get the code
+  3. Update the code in the body
+  4. Run immediately (codes expire in 10 minutes)
+}

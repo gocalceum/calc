@@ -1,0 +1,23 @@
+meta {
+  name: Test Environment Variables
+  type: http
+  seq: 0
+}
+
+get {
+  url: https://httpbin.org/get
+}
+
+headers {
+  X-Client-Id: {{process.env.HMRC_SANDBOX_CLIENT_ID}}
+  X-Client-Secret: {{process.env.HMRC_SANDBOX_CLIENT_SECRET}}
+  X-Test-Direct: {{client_id}}
+  X-Test-From-Env: {{client_secret}}
+}
+
+docs {
+  ## Test Environment Variables
+  
+  This request tests if environment variables are loading correctly.
+  Check the headers sent to see which values are resolved.
+}

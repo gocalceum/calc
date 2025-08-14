@@ -1,0 +1,58 @@
+meta {
+  name: Retrieve Self Assessment Balance and Transactions
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{base_url}}/accounts/self-assessment/{{nino}}/balance-and-transactions
+  auth: none
+}
+
+query {
+  docNumber: 
+  fromDate: 
+  toDate: 
+  onlyOpenItems: 
+  includeLocks: 
+  calculateAccruedInterest: 
+  removePOA: 
+  customerPaymentInformation: 
+  includeEstimatedCharges: 
+}
+
+headers {
+  Accept: application/vnd.hmrc.4.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Retrieve Self Assessment Balance and Transactions
+  
+  This endpoint enables you to retrieve the overall liability broken down into overdue, currently due (payable), and pending (not yet due) amounts. A National Insurance number must be provided.
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario) | Scenario                                                            |
+|----------------------------------|---------------------------------------------------------------------|
+| N/A - DEFAULT                    | Simulates success response.                                         |
+| NOT_FOUND                        | Simulates the scenario where no data is found.                      |
+
+  
+  API: Self Assessment Accounts
+}

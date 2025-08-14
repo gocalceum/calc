@@ -1,0 +1,27 @@
+meta {
+  name: Test SA Endpoints
+  type: http
+  seq: 22
+}
+
+get {
+  url: https://test-api.service.hmrc.gov.uk/individuals/income-tax/SA/taxpayer/NE101272A
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: Bearer 710a23128fa6bf3e3a524c1ee6d7bdfb
+}
+
+tests {
+  test("Should get data", function() {
+    console.log('Status:', res.status);
+    console.log('Response:', JSON.stringify(res.body, null, 2));
+  });
+}
+
+docs {
+  ## Test Self Assessment Endpoints
+  
+  Direct test with hardcoded values to find the right endpoint.
+}

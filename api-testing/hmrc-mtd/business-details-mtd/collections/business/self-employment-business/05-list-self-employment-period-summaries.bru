@@ -1,0 +1,52 @@
+meta {
+  name: List Self-Employment Period Summaries
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{base_url}}/individuals/business/self-employment/{{nino}}/{{businessId}}/period/{{taxYear}}
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.5.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## List Self-Employment Period Summaries
+  
+  This endpoint enables you to retrieve a list of all self-employment update period summaries.
+A National Insurance number and business ID must be provided.
+
+<strong>Note: This endpoint can only be used for submissions for tax year 2024-25 or earlier.
+New endpoints which support cumulative submission will be provided for tax year 2025-26 onwards</strong>.
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario)     | Scenario                                                                                                   |
+|--------------------------------------|------------------------------------------------------------------------------------------------------------|
+| N/A - DEFAULT                        | Simulates success response.                                                                                 |
+| NOT_FOUND                            | Simulates the scenario where no data is found.                                                               |
+| TAX_YEAR_NOT_SUPPORTED               | Simulates the scenario where the tax year is not supported.                                                 |
+| STATEFUL                             | Performs a stateful list.                                                                                    |
+
+  
+  API: Self Employment Business
+}

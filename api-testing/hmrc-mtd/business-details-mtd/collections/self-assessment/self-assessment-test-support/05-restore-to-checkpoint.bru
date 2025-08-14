@@ -1,0 +1,37 @@
+meta {
+  name: Restore to Checkpoint
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{base_url}}/individuals/self-assessment-test-support/vendor-state/checkpoints/{{checkpointId}}/restore
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Restore to Checkpoint
+  
+  This endpoint enables you to reset the stateful data back to the checkpoint created in the sandbox environment.
+
+A valid checkpoint ID must be provided.
+
+When you restore the checkpoint, the modified date of the data will be updated to the restored date.
+
+**Note**: To prevent data loss or unexpected behaviour, the checkpoint restore should not be performed while any other stateful or checkpoint operations are in progress for the same National Insurance number.
+
+  
+  API: Self Assessment Test Support
+}

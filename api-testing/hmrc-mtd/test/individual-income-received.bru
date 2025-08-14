@@ -1,0 +1,27 @@
+meta {
+  name: Individual Income Received
+  type: http
+  seq: 23
+}
+
+get {
+  url: https://test-api.service.hmrc.gov.uk/individuals/income-received/employments/NE101272A/2023-24
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: Bearer 710a23128fa6bf3e3a524c1ee6d7bdfb
+}
+
+tests {
+  test("Should return data", function() {
+    console.log('Status:', res.status);
+    console.log('Response:', JSON.stringify(res.body, null, 2));
+  });
+}
+
+docs {
+  ## Individual Income Received - Employments
+  
+  Get employment income for the tax year.
+}

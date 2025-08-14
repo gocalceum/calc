@@ -1,0 +1,24 @@
+meta {
+  name: Delete a Custom Employment
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{base_url}}/individuals/employments-income/{nino}/{taxYear}/{employmentId}
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Delete a Custom Employment
+  
+  
+  
+  API: Individuals Employments Income
+}

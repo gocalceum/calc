@@ -1,0 +1,55 @@
+meta {
+  name: Update a UK Savings Account name [test only]
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{base_url}}/individuals/savings-income/uk-accounts/{{nino}}/account-name/{savingsAccountId}
+  body: json
+  auth: none
+}
+
+query {
+  savingsAccountId: 
+}
+
+headers {
+  Accept: application/vnd.hmrc.2.0+json
+  Content-Type: {{Content-Type}}
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Update a UK Savings Account name [test only]
+  
+  This endpoint allows a developer to update UK savings account information.
+A National Insurance number and savings account ID must be provided.
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario) | Scenario                                       |
+|----------------------------------|------------------------------------------------|
+| N/A - DEFAULT                    | Simulates success response.                    |
+| NOT_FOUND                        | Simulates the scenario where no data is found. |
+| REQUEST_CANNOT_BE_FULFILLED      | Simulates the scenario where the request cannot be fulfilled for various reasons other than the ones triggering other errors.|
+| STATEFUL                         | Performs a stateful update.                    |
+
+  
+  API: Individuals Savings Income
+}

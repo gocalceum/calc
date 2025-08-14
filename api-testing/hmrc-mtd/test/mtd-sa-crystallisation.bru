@@ -1,0 +1,36 @@
+meta {
+  name: MTD SA Crystallisation
+  type: http
+  seq: 30
+}
+
+post {
+  url: https://test-api.service.hmrc.gov.uk/individuals/calculations/crystallisation/NE101272A/2023-24
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.3.0+json
+  Authorization: Bearer 96720ff4eec36f7f2a03a5e0c81af5f6
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "calculationId": "test-calc-id"
+  }
+}
+
+tests {
+  test("Check response", function() {
+    console.log('Status:', res.status);
+    console.log('Response:', JSON.stringify(res.body, null, 2));
+  });
+}
+
+docs {
+  ## MTD SA Crystallisation
+  
+  Trigger a crystallisation calculation for Self Assessment.
+}

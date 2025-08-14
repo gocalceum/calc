@@ -1,0 +1,35 @@
+meta {
+  name: Create a Test Business
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{base_url}}/individuals/self-assessment-test-support/business/{{nino}}
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create a Test Business
+  
+  This endpoint enables you to create a test business for use within the Sandbox environment.
+
+Customers may have multiple Self-Employment businesses, but only one of each Property business is allowed. 
+MTD supports only one accounting period per year so this must be a full tax year period, for example April 6th to April 5th. 
+Test businesses are automatically purged from the database 7 days after creation.
+
+  
+  API: Self Assessment Test Support
+}
