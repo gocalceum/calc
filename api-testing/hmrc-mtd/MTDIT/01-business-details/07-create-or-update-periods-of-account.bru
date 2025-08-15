@@ -1,0 +1,30 @@
+meta {
+  name: Create or Update Periods of Account
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{base_url}}/individuals/business/details/{nino}/{businessId}/{taxYear}/periods-of-account
+  body: json
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+  
+  test("Should have correlation ID", function() {
+    expect(res.headers["x-correlationid"]).to.be.a("string");
+  });
+}
+
+docs {
+  ## Create or Update Periods of Account
+  
+  
+  
+  ### Path Parameters
+
+}

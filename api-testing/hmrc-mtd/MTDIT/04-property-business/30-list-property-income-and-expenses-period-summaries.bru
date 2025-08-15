@@ -1,0 +1,50 @@
+meta {
+  name: List Property Income and Expenses Period Summaries
+  type: http
+  seq: 30
+}
+
+get {
+  url: {{base_url}}/individuals/business/property/{{nino}}/{{businessId}}/period/{{taxYear}}
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.6.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## List Property Income and Expenses Period Summaries
+  
+  This endpoint enables you to list the period summaries associated with UK or foreign Properties. A National Insurance number, tax year and business ID are required.
+
+<strong>Note: This endpoint only supports submissions up to tax year 2024-25.
+New endpoints which support cumulative submission are provided for tax year 2025-26 onwards</strong>.
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario) | Scenario                                       |
+|----------------------------------|------------------------------------------------|
+| N/A - DEFAULT                    | Simulates a success response.                  |
+| NOT_FOUND                        | Simulates the scenario where no data is found. |
+| STATEFUL                         | Performs a stateful retrieve.                  |
+
+  
+  API: Property Business
+}

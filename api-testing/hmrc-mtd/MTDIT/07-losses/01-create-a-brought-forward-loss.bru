@@ -1,0 +1,62 @@
+meta {
+  name: Create a Brought Forward Loss
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/individuals/losses/{{nino}}/brought-forward-losses/tax-year/brought-forward-from/{{taxYear}}
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.6.0+json
+  Content-Type: {{Content-Type}}
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create a Brought Forward Loss
+  
+  This endpoint enables you to create a new brought forward loss which can be submitted against self-employment, self-employment class 4,
+UK Furnished Holiday Let (FHL) property, UK other (Non-FHL) property, foreign property FHL in the European Economic Area (EEA) and foreign property for the tax year prior to joining MTD.
+A National Insurance number and tax year must be provided.
+
+<strong>
+  Note: Brought forward losses for the following 2 income sources will not be supported from tax year 2025-26 onwards:
+    <ul>
+      <li>uk-property-fhl</li>
+      <li>foreign-property-fhl-eea</li>
+    </ul>
+</strong>    
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.    
+
+| Header Value (Gov-Test-Scenario)     | Scenario                                                                                                                                             |
+|--------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| N/A - DEFAULT                        | Simulates success response.                                                                                                                          |
+| NOT_FOUND                            | Simulates the scenario where no data is found.                                                                                                       |
+| DUPLICATE_SUBMISSION                 | Simulates the scenario where a duplicated loss is found.                                                                                             |
+| STATEFUL                             | Performs a stateful create.                                                                                                                          |
+| BFL_NOT_SUPPORTED_FOR_FHL_PROPERTIES | Simulates the scenario where brought forward losses are submitted for income sources uk-property-fhl or foreign-property-fhl-eea for tax year 25/26. |
+| OUTSIDE_AMENDMENT_WINDOW             | Simulates the scenario where request cannot be completed as it is outside the amendment window.                                                      |
+
+  
+  API: Individual Losses
+}

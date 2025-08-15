@@ -1,0 +1,25 @@
+meta {
+  name: Create and Amend 'Report and Pay Capital Gains Tax on Residential Property' Overrides (PPD)
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{base_url}}/individuals/disposals-income/residential-property/{nino}/{taxYear}/ppd
+  body: json
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create and Amend 'Report and Pay Capital Gains Tax on Residential Property' Overrides (PPD)
+  
+  
+  
+  API: Individuals Capital Gains Income
+}

@@ -1,0 +1,61 @@
+meta {
+  name: List Loss Claims
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{base_url}}/individuals/losses/{{nino}}/loss-claims/tax-year/{{taxYearClaimedFor}}
+  auth: none
+}
+
+query {
+  businessId: 
+  typeOfLoss: 
+  typeOfClaim: 
+}
+
+headers {
+  Accept: application/vnd.hmrc.6.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## List Loss Claims
+  
+  This endpoint enables you to retrieve the existing loss claims information.
+A National Insurance Number and tax year must be provided.
+
+<strong>
+  Note: carry-sideways-fhl type of loss claims for income sources uk-property-fhl and foreign-property-fhl-eea will not be supported from tax year 2025-26 onwards.
+</strong>
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario) | Scenario                                                                                                                                                                                       |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| N/A - DEFAULT                    | Simulates successful self-employment response where typeOfClaim is "carry-forward".                                                                                                            |
+| UK_PROPERTY                      | Simulates successful uk-property response where typeOfClaim is "carry-sideways-fhl".                                                                                                   |
+| FOREIGN_PROPERTY                 | Simulates successful foreign property response where typeOfClaim is "carry-sideways".                                                                                                          |
+| NOT_FOUND                        | Simulates the scenario where no data is found.                                                                                                                                                 |
+| DYNAMIC                          | The following response values will change to correspond to the values submitted in the request:<br> • taxYearClaimedFor<br> • lastModified<br> • typeOfLoss<br> • typeOfClaim<br> • businessId |
+| STATEFUL                         | Performs a stateful list.                                                                                                                                                                      |
+
+  
+  API: Individual Losses
+}

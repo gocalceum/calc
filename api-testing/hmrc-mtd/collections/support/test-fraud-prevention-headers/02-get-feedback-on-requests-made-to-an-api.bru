@@ -1,0 +1,33 @@
+meta {
+  name: Get feedback on requests made to an API
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{base_url}}/test/fraud-prevention-headers/{{api}}/validation-feedback
+  auth: none
+}
+
+query {
+  connectionMethod: 
+}
+
+headers {
+  Accept: application/json
+  Authorization: Bearer {{access_token}}
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Get feedback on requests made to an API
+  
+  Use this resource to get feedback on fraud prevention headers submitted by your application in sandbox. You'll get detailed feedback on the most recent request to each endpoint of a supported API.
+  
+  API: Test Fraud Prevention Headers
+}

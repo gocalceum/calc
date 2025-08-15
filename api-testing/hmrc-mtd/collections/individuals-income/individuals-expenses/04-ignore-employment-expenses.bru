@@ -1,0 +1,52 @@
+meta {
+  name: Ignore Employment Expenses
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/individuals/expenses/employments/{{nino}}/{{taxYear}}/ignore
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.3.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Ignore Employment Expenses
+  
+  This endpoint enables you to ignore HMRC-provided employment expenses for this user. This endpoint can only be used 
+after the tax year has ended. A National Insurance number and tax year must be provided.
+
+Ignoring an expense will remove any amended expenses and add the "dateIgnored" flag to HMRC-provided expenses.
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario)        | Scenario                                                                                        |
+|-----------------------------------------|-------------------------------------------------------------------------------------------------|
+| N/A - DEFAULT                           | Simulates success response.                                                                     |
+| TAX_YEAR_NOT_ENDED                      | Simulates the scenario where the submission is for a tax year that has not ended.               |
+| NOT_FOUND                               | Scenario to simulate not found error.                                                           |
+| OUTSIDE_AMENDMENT_WINDOW                | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+
+  
+  API: Individuals Expenses
+}

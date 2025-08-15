@@ -1,0 +1,24 @@
+meta {
+  name: Retrieve Charitable Giving Tax Relief
+  type: http
+  seq: 13
+}
+
+get {
+  url: {{base_url}}/individuals/reliefs/charitable-giving/{nino}/{taxYear}
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Retrieve Charitable Giving Tax Relief
+  
+  
+  
+  API: Individuals Reliefs
+}

@@ -1,0 +1,37 @@
+meta {
+  name: OAuth2 Token Exchange (Debug)
+  type: http
+  seq: 2
+}
+
+post {
+  url: https://test-api.service.hmrc.gov.uk/oauth/token
+  body: formUrlEncoded
+  auth: none
+}
+
+headers {
+  Content-Type: application/x-www-form-urlencoded
+  Accept: application/json
+}
+
+body:form-urlencoded {
+  grant_type: authorization_code
+  client_id: iQetMYZLL2Gq9dmqFTcJGSVMLpxZ
+  client_secret: 3ed60b21-3e72-409e-8fb2-d66a8edb0dc6
+  code: REPLACE_WITH_FRESH_CODE
+  redirect_uri: https://oauth.pstmn.io/v1/callback
+}
+
+tests {
+  test("Should receive access token", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body.access_token).to.be.a('string');
+  });
+}
+
+docs {
+  ## Debug version with hardcoded values
+  
+  This is a debug version with all values hardcoded to test if the issue is with variable resolution.
+}

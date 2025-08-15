@@ -1,0 +1,24 @@
+meta {
+  name: Retrieve a Self-Employment Annual Submission
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/individuals/business/self-employment/{nino}/{businessId}/annual/{taxYear}
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Retrieve a Self-Employment Annual Submission
+  
+  
+  
+  API: Self Employment Business
+}

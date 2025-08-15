@@ -1,0 +1,25 @@
+meta {
+  name: Create and Amend a Foreign Property Annual Submission
+  type: http
+  seq: 28
+}
+
+put {
+  url: {{base_url}}/individuals/business/property/foreign/{nino}/{businessId}/annual/{taxYear}
+  body: json
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create and Amend a Foreign Property Annual Submission
+  
+  
+  
+  API: Property Business
+}

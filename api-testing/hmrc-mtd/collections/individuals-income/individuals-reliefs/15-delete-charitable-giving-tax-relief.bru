@@ -1,0 +1,24 @@
+meta {
+  name: Delete Charitable Giving Tax Relief
+  type: http
+  seq: 15
+}
+
+delete {
+  url: {{base_url}}/individuals/reliefs/charitable-giving/{nino}/{taxYear}
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Delete Charitable Giving Tax Relief
+  
+  
+  
+  API: Individuals Reliefs
+}

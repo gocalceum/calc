@@ -1,0 +1,57 @@
+meta {
+  name: Retrieve a Business Income Source Summary (BISS)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/individuals/self-assessment/income-summary/{{nino}}/{{typeOfBusiness}}/{{taxYear}}/{{businessId}}
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.3.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Retrieve a Business Income Source Summary (BISS)
+  
+  This endpoint enables you to retrieve a running (year-to-date) summary of the income and expenditure for a 
+specified self-employment or property business during a tax year. 
+A National Insurance number, business ID, tax year and type of business are required.
+
+<strong>
+  Note: From tax year 2025-26 onwards the following business types are no longer valid:
+    <ul>
+      <li>foreign-property-fhl-eea</li>
+      <li>uk-property-fhl</li>
+    </ul>
+</strong>
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario) | Scenario                                                      |
+|----------------------------------|---------------------------------------------------------------|
+| N/A - DEFAULT                    | Simulates success response with total, profit and loss values.|
+| NOT_FOUND                        | Simulates the scenario where no data is found.                |
+| NO_INCOME_SUBMISSIONS_EXIST      | Simulates the scenario where no income submissions exist.     |
+
+  
+  API: Business Income Source Summary
+}

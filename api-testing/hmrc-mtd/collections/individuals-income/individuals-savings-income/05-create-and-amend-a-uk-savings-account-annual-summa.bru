@@ -1,0 +1,25 @@
+meta {
+  name: Create and Amend a UK Savings Account Annual Summary
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{base_url}}/individuals/savings-income/uk-accounts/{nino}/{taxYear}/{savingsAccountId}
+  body: json
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create and Amend a UK Savings Account Annual Summary
+  
+  
+  
+  API: Individuals Savings Income
+}

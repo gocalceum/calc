@@ -1,0 +1,28 @@
+meta {
+  name: Get SA Accounts
+  type: http
+  seq: 12
+}
+
+get {
+  url: {{base_url}}/accounts/self-assessment/{{test_user_nino}}/collection-tax-years
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: Bearer 96720ff4eec36f7f2a03a5e0c81af5f6
+}
+
+script:pre-request {
+  const token = bru.getVar('access_token');
+  const nino = bru.getProcessEnv('TEST_USER_NINO');
+  console.log('Using access token:', token);
+  console.log('Using NINO:', nino);
+  console.log('Full URL will be: https://test-api.service.hmrc.gov.uk/accounts/self-assessment/' + nino + '/collection-tax-years');
+}
+
+docs {
+  ## Get Self Assessment Accounts
+  
+  Gets the Self Assessment accounts for the test user.
+}

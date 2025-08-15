@@ -1,0 +1,77 @@
+meta {
+  name: Refresh Access Token
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{auth_url}}/oauth/token
+}
+
+headers {
+  Content-Type: application/x-www-form-urlencoded
+}
+
+body:form-urlencoded {
+  grant_type: refresh_token
+  client_id: {{client_id}}
+  client_secret: {{client_secret}}
+  refresh_token: 75fbc17289b9d53681ce36ef15d05eb5
+}
+
+script:pre-request {
+  // Check if we have a refresh token
+  const refreshToken = bru.getVar('refresh_token');
+  if (!refreshToken) {
+    throw new Error('No refresh token available. Please complete OAuth2 flow first.');
+  }
+}
+
+script:post-response {
+  // Update tokens
+  if (res.body.access_token) {
+    bru.setVar('access_token', res.body.access_token);
+    console.log('New access token saved');
+  }
+  
+  if (res.body.refresh_token) {
+    bru.setVar('refresh_token', res.body.refresh_token);
+    console.log('New refresh token saved');
+  }
+  
+  if (res.body.expires_in) {
+    const expiryTime = Date.now() + (res.body.expires_in * 1000);
+    bru.setVar('token_expiry', expiryTime);
+    console.log('Token expires at:', new Date(expiryTime).toISOString());
+  }
+}
+
+tests {
+  test("Should receive new access token", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body.access_token).to.be.a('string');
+  });
+  
+  test("Should receive token expiry", function() {
+    expect(res.body.expires_in).to.be.a('number');
+  });
+}
+
+docs {
+  ## Refresh Access Token
+  
+  Use the refresh token to get a new access token when it expires.
+  
+  ### When to use:
+  - Access token has expired (after 4 hours)
+  - Before making API calls if token is close to expiry
+  
+  ### Response:
+  - access_token: New bearer token
+  - refresh_token: May receive a new refresh token
+  - expires_in: Seconds until new token expires
+  
+  ### Notes:
+  - Refresh tokens may also expire or be rotated
+  - If refresh fails, user must re-authenticate
+}

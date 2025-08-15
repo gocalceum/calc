@@ -1,0 +1,25 @@
+meta {
+  name: Amend State Benefit
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{base_url}}/individuals/state-benefits/{nino}/{taxYear}/{benefitId}
+  body: json
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Amend State Benefit
+  
+  
+  
+  API: Individuals State Benefits
+}

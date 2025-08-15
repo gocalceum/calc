@@ -1,0 +1,25 @@
+meta {
+  name: Create and Amend Other Capital Gains and Disposals
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{base_url}}/individuals/disposals-income/other-gains/{nino}/{taxYear}
+  body: json
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create and Amend Other Capital Gains and Disposals
+  
+  
+  
+  API: Individuals Capital Gains Income
+}

@@ -1,0 +1,41 @@
+meta {
+  name: List SA Calculations
+  type: http
+  seq: 20
+}
+
+get {
+  url: {{base_url}}/individuals/calculations/{{test_user_nino}}/self-assessment
+}
+
+headers {
+  Accept: application/vnd.hmrc.3.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  console.log('Fetching Self Assessment calculations for NINO:', bru.getProcessEnv('TEST_USER_NINO'));
+}
+
+tests {
+  test("Should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+}
+
+docs {
+  ## List Self Assessment Calculations
+  
+  Lists all Self Assessment calculations for the test user.
+  
+  Expected response structure:
+  {
+    "calculations": [
+      {
+        "id": "string",
+        "calculationTimestamp": "string",
+        "type": "string"
+      }
+    ]
+  }
+}

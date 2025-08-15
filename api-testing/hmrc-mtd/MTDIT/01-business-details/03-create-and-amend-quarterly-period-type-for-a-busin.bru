@@ -1,0 +1,55 @@
+meta {
+  name: Create and Amend Quarterly Period Type for a Business [test only]
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{base_url}}/individuals/business/details/{{nino}}/{{businessId}}/{{taxYear}}
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.2.0+json
+  Authorization: Bearer {{access_token}}
+  Gov-Test-Scenario: {{Gov-Test-Scenario}}
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+  
+  test("Should have correlation ID", function() {
+    expect(res.headers["x-correlationid"]).to.be.a("string");
+  });
+}
+
+docs {
+  ## Create and Amend Quarterly Period Type for a Business [test only]
+  
+  This endpoint enables you to create and amend the type of quarterly reporting period used for a business for a specific tax year.
+You can choose standard quarterly periods (where the first period is 6 April to 5 July) or calendar quarterly periods (first period 1 April to 30 June) for each tax year.
+Note that the quarterly period type cannot be changed after a submission is made for that year.
+
+**Warning:** If an invalid tax year or invalid business ID is submitted, the service will return a RULE_REQUEST_CANNOT_BE_FULFILLED error response. Only the current tax year is allowed and business IDs must relate to a self-employment or property income source.
+
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.    
+
+| Header Value (Gov-Test-Scenario) | Scenario                                                                                                                                                         |
+|----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| N/A - DEFAULT                    | Simulate a successful response.                                                                                                                                  |
+| BUSINESS_ID_NOT_FOUND           | Simulates the scenario in which the business ID is not found.                                                                                                    |
+| BUSINESS_ID_STATE_CONFLICT       | Simulates the scenario in which the request conflicts with the current state of the business ID.                                                                 |
+| QUARTERLY_PERIOD_UPDATING        | Simulates the scenario in which the quarterly period type cannot be changed for the current year as the business is treated as commencing in the following year. |
+| STATEFUL                         | Performs a stateful create and update.                                                                                                                           |
+
+  
+  ### Path Parameters
+  - nino: {{nino}}
+  - businessId: {{businessId}}
+  - taxYear: {{taxYear}}
+}

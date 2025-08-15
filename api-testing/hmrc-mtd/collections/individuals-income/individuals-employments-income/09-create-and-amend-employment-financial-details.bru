@@ -1,0 +1,25 @@
+meta {
+  name: Create and Amend Employment Financial Details
+  type: http
+  seq: 9
+}
+
+put {
+  url: {{base_url}}/individuals/employments-income/{nino}/{taxYear}/{employmentId}/financial-details
+  body: json
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create and Amend Employment Financial Details
+  
+  
+  
+  API: Individuals Employments Income
+}

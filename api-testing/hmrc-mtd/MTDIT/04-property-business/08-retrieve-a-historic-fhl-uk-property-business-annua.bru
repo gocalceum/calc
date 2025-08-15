@@ -1,0 +1,24 @@
+meta {
+  name: Retrieve a Historic FHL UK Property Business Annual Submission
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{base_url}}/individuals/business/property/uk/annual/furnished-holiday-lettings/{nino}/{taxYear}
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Retrieve a Historic FHL UK Property Business Annual Submission
+  
+  
+  
+  API: Property Business
+}

@@ -1,0 +1,53 @@
+meta {
+  name: List Self Assessment Tax Calculations [test only]
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{base_url}}/individuals/calculations/{{nino}}/self-assessment/{{taxYear}}
+  auth: none
+}
+
+query {
+  calculationType: 
+}
+
+headers {
+  Accept: application/vnd.hmrc.8.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## List Self Assessment Tax Calculations [test only]
+  
+  This endpoint enables you to list Self Assessment tax calculations for a given National Insurance number and tax year. 
+
+A National Insurance number must be provided.
+
+### Test data
+Scenario simulations using `Gov-Test-Scenario` headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario)   | Scenario                                    |
+|------------------------------------|---------------------------------------------|
+| N/A - DEFAULT                      | Simulates success response.                 |
+| NOT_FOUND                          | Simulates the scenario where no data is found. |
+| DYNAMIC                            | The following response parameters will be based on the data submitted in the request: <br><br/> &bull; taxYear <br/> &bull; calculationTimestamp <br/> &bull; finalDeclarationTimestamp |
+
+  
+  API: Individual Calculations
+}

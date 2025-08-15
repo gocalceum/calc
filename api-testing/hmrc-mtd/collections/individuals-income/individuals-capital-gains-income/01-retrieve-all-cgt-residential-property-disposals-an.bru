@@ -1,0 +1,28 @@
+meta {
+  name: Retrieve All CGT Residential Property Disposals and Overrides
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/individuals/disposals-income/residential-property/{nino}/{taxYear}
+  auth: none
+}
+
+query {
+  source: 
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Retrieve All CGT Residential Property Disposals and Overrides
+  
+  
+  
+  API: Individuals Capital Gains Income
+}

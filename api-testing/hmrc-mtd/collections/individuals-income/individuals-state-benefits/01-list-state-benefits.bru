@@ -1,0 +1,28 @@
+meta {
+  name: List State Benefits
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/individuals/state-benefits/{nino}/{taxYear}
+  auth: none
+}
+
+query {
+  benefitId: 
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## List State Benefits
+  
+  
+  
+  API: Individuals State Benefits
+}

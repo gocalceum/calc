@@ -1,0 +1,50 @@
+meta {
+  name: Delete a Brought Forward Loss
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{base_url}}/individuals/losses/{{nino}}/brought-forward-losses/{{lossId}}/tax-year/{{taxYear}}
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.6.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Delete a Brought Forward Loss
+  
+  This endpoint allows a developer to delete an existing brought forward loss. A National Insurance number, tax year and Loss ID must be provided.
+The user should be aware that where a loss has been used as part of a successful final declaration activity, deletion will be blocked and an error code will be returned. In such a case, the user can amend the loss amount to zero.
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.    
+
+| Header Value (Gov-Test-Scenario)       | Scenario                                       |
+|----------------------------------------|------------------------------------------------|
+| N/A - DEFAULT                          | Simulates success response.                    |
+| DELETE_AFTER_FINAL_DECLARATION         | Simulates the error scenario where the user has already submitted a final declaration for this tax year. |
+| NOT_FOUND                              | Simulates the scenario where no data is found. |
+| OUTSIDE_AMENDMENT_WINDOW               | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+| STATEFUL                               | Performs a stateful delete.                    |
+
+  
+  API: Individual Losses
+}

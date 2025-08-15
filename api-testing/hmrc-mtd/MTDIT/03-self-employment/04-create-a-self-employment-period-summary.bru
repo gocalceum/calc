@@ -1,0 +1,73 @@
+meta {
+  name: Create a Self-Employment Period Summary
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/individuals/business/self-employment/{{nino}}/{{businessId}}/period
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.5.0+json
+  Content-Type: {{Content-Type}}
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create a Self-Employment Period Summary
+  
+  This endpoint enables you to create a self-employment period summary for submission of periodic data.
+Submissions must include values for incomes, expenses and deductions, even if the values are zero.
+For example, if there is no income for the period, submit a periodIncome object with 'turnover' and 'other' values of zero.
+A National Insurance number and business ID must be provided.
+
+<strong>Note: This endpoint can only be used for submissions for tax year 2024-25 or earlier.
+New endpoints which support cumulative submission will be provided for tax year 2025-26 onwards</strong>.
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario)             | Scenario                                                                                                                                                                           |
+|----------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| N/A - DEFAULT                                | Simulates success response.                                                                                                                                                        |
+| OVERLAPPING_PERIOD                           | Simulates the scenario where the period summary overlaps with an existing period summary.                                                                                          |
+| MISALIGNED_PERIOD                            | Simulates the scenario where the period summary isn't within the accounting period.                                                                                                |
+| NOT_CONTIGUOUS_PERIOD                        | Simulates the scenario where the period summaries are not contiguous.                                                                                                              |
+| NOT_ALLOWED_CONSOLIDATED_EXPENSES            | Simulates the scenario where the cumulative turnover amount exceeds the consolidated expenses threshold.                                                                           |
+| DUPLICATE_SUBMISSION                         | Simulates the scenario where a summary has already been submitted for the specified period. <br><br>This scenario only occurs for data related to tax years from 2023-24 onwards.  |
+| TAX_YEAR_NOT_SUPPORTED                       | Simulates the scenario where the tax year is not supported. <br><br>This scenario only occurs for data related to tax years from 2023-24 onwards.                                  |
+| NOT_FOUND                                    | Simulates the scenario where no data is found.                                                                                                                                     |
+| BOTH_EXPENSES_SUPPLIED                       | Simulates the scenario where both expenses and consolidatedExpenses are present at the same time.                                                                                  |
+| BUSINESS_INCOME_PERIOD_RESTRICTION           | Simulates the scenario where the customer has ITSA status 'Annual' or a latent business income source and the submission period is between 6 April to 5 April.                     |
+| STATEFUL                                     | Performs a stateful create.                                                                                                                                                        |
+
+### Standard quarterly period dates
+The standard quarterly periods and deadlines in each tax year are given in this table. For more information please visit [the guide](https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax)
+
+| Quarterly period       | Quarterly deadline |
+|------------------------|--------------------|
+| 6 April to 5 July      | 5 August           |
+| 6 July to 5 October    | 5 November         |
+| 6 October to 5 January | 5 February         |
+| 6 January to 5 April   | 5 May              |
+
+  
+  API: Self Employment Business
+}

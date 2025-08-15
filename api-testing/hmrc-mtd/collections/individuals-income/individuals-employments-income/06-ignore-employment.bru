@@ -1,0 +1,53 @@
+meta {
+  name: Ignore Employment
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{base_url}}/individuals/employments-income/{{nino}}/{{taxYear}}/{{employmentId}}/ignore
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.2.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Ignore Employment
+  
+  This endpoint enables you to ignore an HMRC-provided employment from a list of employments.
+<strong>This endpoint can only be used after the tax year has ended.</strong>
+A National Insurance number, tax year and Employment ID must be provided.
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario) | Scenario                                                          |
+|----------------------------------|-------------------------------------------------------------------|
+| N/A - DEFAULT                    | Simulates success response.                                       |
+| CUSTOM_EMPLOYMENT                | Simulates the scenario where a custom employment is submitted.    |
+| NOT_FOUND                        | Simulates the scenario where no data is found.                    |
+| TAX_YEAR_NOT_ENDED               | Simulates the scenario where the tax year provided has not ended. |
+| REQUEST_CANNOT_BE_FULFILLED      | Simulates the scenario where the request cannot be fulfilled for various reasons other than the ones triggering other errors.|
+| OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window.|
+
+  
+  API: Individuals Employments Income
+}

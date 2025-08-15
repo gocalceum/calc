@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Loader2, Building2, Zap } from 'lucide-react'
+import { Loader2, Building2, Zap, LogOut } from 'lucide-react'
 import { supabase } from '@/supabaseClient'
 import { useAuth } from '@/hooks/useAuth'
 import { useOrganization } from '@/contexts/OrganizationContext'
@@ -91,6 +91,11 @@ export function OrganizationSetup() {
 
   const handleDetailedSetup = () => {
     navigate('/onboarding/detailed')
+  }
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    navigate('/login')
   }
 
   return (
@@ -174,9 +179,15 @@ export function OrganizationSetup() {
           >
             I want more options
           </Button>
-          <p className="text-xs text-muted-foreground text-center mt-2">
-            You can always update these details later in settings
-          </p>
+          <Button
+            variant="ghost"
+            className="w-full mt-2"
+            onClick={handleSignOut}
+            disabled={isLoading}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Sign out
+          </Button>
         </CardFooter>
       </Card>
     </div>

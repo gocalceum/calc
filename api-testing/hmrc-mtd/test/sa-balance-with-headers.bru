@@ -1,0 +1,46 @@
+meta {
+  name: SA Balance with Fraud Headers
+  type: http
+  seq: 18
+}
+
+get {
+  url: {{base_url}}/accounts/self-assessment/{{test_user_nino}}/balance
+}
+
+headers {
+  Accept: application/vnd.hmrc.4.0+json
+  Authorization: Bearer {{access_token}}
+  Gov-Client-Connection-Method: DESKTOP_APP_VIA_SERVER
+  Gov-Client-Device-ID: 550e8400-e29b-41d4-a716-446655440000
+  Gov-Client-Local-IPs: 192.168.1.1
+  Gov-Client-Local-IPs-Timestamp: {{$isoTimestamp}}
+  Gov-Client-MAC-Addresses: 00%3A00%3A00%3A00%3A00%3A00
+  Gov-Client-Multi-Factor: type=TOTP&timestamp={{$isoTimestamp}}&unique-reference=123456789
+  Gov-Client-Public-IP: 203.0.113.1
+  Gov-Client-Public-IP-Timestamp: {{$isoTimestamp}}
+  Gov-Client-Public-Port: 12345
+  Gov-Client-Screens: width=1920&height=1080&scaling-factor=1&colour-depth=24
+  Gov-Client-Timezone: UTC+00:00
+  Gov-Client-User-Agent: os-family=macOS&os-version=14.5&device-manufacturer=Apple&device-model=MacBookPro
+  Gov-Client-User-IDs: os=user123
+  Gov-Client-Window-Size: width=1024&height=768
+  Gov-Vendor-Product-Name: Calceum
+  Gov-Vendor-Version: Calceum=1.0&CalceumServer=1.0
+  Gov-Vendor-License-IDs: Calceum=550e8400-e29b-41d4-a716-446655440001
+  Gov-Vendor-Public-IP: 198.51.100.1
+  Gov-Vendor-Forwarded: by=198.51.100.1&for=203.0.113.1
+}
+
+script:pre-request {
+  const token = bru.getVar('access_token');
+  const nino = bru.getProcessEnv('TEST_USER_NINO');
+  console.log('Using NINO:', nino);
+  console.log('Full URL: https://test-api.service.hmrc.gov.uk/accounts/self-assessment/' + nino + '/balance');
+}
+
+docs {
+  ## SA Balance with Fraud Prevention Headers
+  
+  Tests Self Assessment balance endpoint with all required fraud prevention headers.
+}

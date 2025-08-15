@@ -1,0 +1,28 @@
+meta {
+  name: List All UK Savings Accounts
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/individuals/savings-income/uk-accounts/{nino}
+  auth: none
+}
+
+query {
+  savingsAccountId: 
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## List All UK Savings Accounts
+  
+  
+  
+  API: Individuals Savings Income
+}

@@ -1,0 +1,24 @@
+meta {
+  name: Delete High Income Child Benefit Charge Submission [test only]
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{base_url}}/individuals/charges/high-income-child-benefit/{nino}/{taxYear}
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Delete High Income Child Benefit Charge Submission [test only]
+  
+  
+  
+  API: Individuals Charges
+}

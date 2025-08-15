@@ -1,0 +1,59 @@
+meta {
+  name: Create a UK Property Income & Expenses Period Summary
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/individuals/business/property/uk/{{nino}}/{{businessId}}/period/{{taxYear}}
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.6.0+json
+  Content-Type: {{Content-Type}}
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create a UK Property Income & Expenses Period Summary
+  
+  This endpoint allows a developer to submit the income and expenses for a UK property business. This submission is 
+for either or both of Furnished Holiday Letting (FHL) and Non FHL UK property submissions. A National Insurance 
+number, business ID and tax year are required.
+
+<strong>Note: This endpoint only supports submissions up to tax year 2024-25.
+New endpoints which support cumulative submission are provided for tax year 2025-26 onwards</strong>.
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario)   | Scenario                                                                                              |
+|------------------------------------|-------------------------------------------------------------------------------------------------------|
+| N/A - DEFAULT                      | Simulate success response.                                                                            |
+| NOT_FOUND                          | Simulates the scenario where no data is found.                                                        |
+| OVERLAPPING                        | Simulates the scenario where the period summary overlaps with an existing period summary.             |
+| MISALIGNED                         | Simulates the scenario where the period summary isn't within the accounting period.                   |
+| NOT_CONTIGUOUS                     | Simulates the scenario where the period summaries are not contiguous.                                 |
+| DUPLICATE_SUBMISSION               | Simulates the scenario where a summary has already been submitted for the specified period.           |
+| TYPE_OF_BUSINESS_INCORRECT         | Simulates the scenario where the supplied Business ID does not represent a foreign property business. |
+| STATEFUL                           | Performs a stateful create.                                                                           |
+
+  
+  API: Property Business
+}

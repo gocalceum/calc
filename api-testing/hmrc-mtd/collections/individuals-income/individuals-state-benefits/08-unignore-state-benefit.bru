@@ -1,0 +1,25 @@
+meta {
+  name: Unignore State Benefit
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{base_url}}/individuals/state-benefits/{nino}/{taxYear}/{benefitId}/unignore
+  body: json
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Unignore State Benefit
+  
+  
+  
+  API: Individuals State Benefits
+}

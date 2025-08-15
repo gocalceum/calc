@@ -1,0 +1,25 @@
+meta {
+  name: Add a Custom Employment
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/individuals/employments-income/{nino}/{taxYear}
+  body: json
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Add a Custom Employment
+  
+  
+  
+  API: Individuals Employments Income
+}

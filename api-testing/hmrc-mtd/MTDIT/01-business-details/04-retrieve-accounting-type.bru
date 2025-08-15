@@ -1,0 +1,29 @@
+meta {
+  name: Retrieve Accounting Type
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{base_url}}/individuals/business/details/{nino}/{businessId}/{taxYear}/accounting-type
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+  
+  test("Should have correlation ID", function() {
+    expect(res.headers["x-correlationid"]).to.be.a("string");
+  });
+}
+
+docs {
+  ## Retrieve Accounting Type
+  
+  
+  
+  ### Path Parameters
+
+}

@@ -1,0 +1,25 @@
+meta {
+  name: Create and Amend Charitable Giving Tax Relief
+  type: http
+  seq: 14
+}
+
+put {
+  url: {{base_url}}/individuals/reliefs/charitable-giving/{nino}/{taxYear}
+  body: json
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create and Amend Charitable Giving Tax Relief
+  
+  
+  
+  API: Individuals Reliefs
+}

@@ -1,0 +1,45 @@
+meta {
+  name: Hello User - Test Token
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{base_url}}/hello/user
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: Bearer 96720ff4eec36f7f2a03a5e0c81af5f6
+}
+
+script:pre-request {
+  // Use the saved access token
+  const token = bru.getVar('access_token');
+  console.log('Using access token:', token);
+}
+
+tests {
+  test("Should be authorized", function() {
+    expect(res.status).to.not.equal(401);
+    expect(res.status).to.not.equal(403);
+  });
+  
+  test("Should return success", function() {
+    expect(res.status).to.equal(200);
+  });
+}
+
+docs {
+  ## Hello User Test
+  
+  This is HMRC's basic test endpoint to verify OAuth2 is working.
+  
+  Expected response:
+  {
+    "message": "Hello User"
+  }
+  
+  If you get 401/403: Token issue
+  If you get 200: Everything works!
+}

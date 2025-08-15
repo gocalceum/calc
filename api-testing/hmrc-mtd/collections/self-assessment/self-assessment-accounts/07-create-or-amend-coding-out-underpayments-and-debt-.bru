@@ -1,0 +1,25 @@
+meta {
+  name: Create or Amend Coding Out Underpayments and Debt Amounts
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{base_url}}/accounts/self-assessment/{nino}/{taxYear}/collection/tax-code
+  body: json
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Create or Amend Coding Out Underpayments and Debt Amounts
+  
+  
+  
+  API: Self Assessment Accounts
+}

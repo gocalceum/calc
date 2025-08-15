@@ -1,0 +1,54 @@
+meta {
+  name: List Self Assessment Payments & Allocation Details
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{base_url}}/accounts/self-assessment/{{nino}}/payments-and-allocations
+  auth: none
+}
+
+query {
+  fromDate: 
+  toDate: 
+  paymentLot: 
+  paymentLotItem: 
+}
+
+headers {
+  Accept: application/vnd.hmrc.4.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  // Add Gov-Test-Scenario header if set
+  const scenario = bru.getVar('Gov-Test-Scenario');
+  if (scenario && scenario.trim() !== '') {
+    req.setHeader('Gov-Test-Scenario', scenario);
+  }
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## List Self Assessment Payments & Allocation Details
+  
+  This endpoint enables you to list the payments and allocation details of one or more liabilities for a National insurance number.
+
+### Test data
+Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+| Header Value (Gov-Test-Scenario) | Scenario                                                         |
+|----------------------------------|------------------------------------------------------------------|
+| N/A - DEFAULT                    | Simulates success response.                                      |
+| NOT_FOUND                        | Simulates the scenario where no data is found.                   |
+| INVALID_DATE_RANGE               | Simulates the scenario where the provided date range is invalid. |    
+
+  
+  API: Self Assessment Accounts
+}

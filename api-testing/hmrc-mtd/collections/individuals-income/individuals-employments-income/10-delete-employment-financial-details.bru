@@ -1,0 +1,24 @@
+meta {
+  name: Delete Employment Financial Details
+  type: http
+  seq: 10
+}
+
+delete {
+  url: {{base_url}}/individuals/employments-income/{nino}/{taxYear}/{employmentId}/financial-details
+  auth: none
+}
+
+tests {
+  test("Should return success", function() {
+    expect(res.status).to.be.oneOf([200, 201, 204]);
+  });
+}
+
+docs {
+  ## Delete Employment Financial Details
+  
+  
+  
+  API: Individuals Employments Income
+}

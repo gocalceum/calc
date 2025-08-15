@@ -1,0 +1,39 @@
+meta {
+  name: Get SA Obligations
+  type: http
+  seq: 21
+}
+
+get {
+  url: {{base_url}}/obligations/details/{{test_user_nino}}/income-tax
+}
+
+query {
+  from: 2023-04-06
+  to: 2024-04-05
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: Bearer {{access_token}}
+}
+
+script:pre-request {
+  console.log('Fetching obligations for NINO:', bru.getProcessEnv('TEST_USER_NINO'));
+}
+
+tests {
+  test("Should return obligations", function() {
+    expect(res.status).to.be.oneOf([200, 404]);
+  });
+}
+
+docs {
+  ## Get Self Assessment Obligations
+  
+  Returns the obligations for a given NINO and date range.
+  
+  Query parameters:
+  - from: Start date (YYYY-MM-DD)
+  - to: End date (YYYY-MM-DD)
+}
