@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import { supabase } from '@/supabaseClient'
 import { Session } from '@supabase/supabase-js'
 import Layout from './components/Layout'
@@ -22,6 +22,10 @@ import { OrganizationProvider } from './contexts/OrganizationContext'
 import { EntityProvider } from './contexts/EntityContext'
 import './App.css'
 import './index.css'
+
+// Lazy load Self Assessment components
+const SADashboard = lazy(() => import('./pages/self-assessment/SADashboard'))
+const SACallback = lazy(() => import('./pages/self-assessment/SACallback'))
 
 function App() {
   const [session, setSession] = useState<Session | null>(null)
@@ -97,6 +101,30 @@ function App() {
                   element={session ? <Settings /> : <Navigate to="/login" />}
                 />
                 <Route path="profile" element={session ? <Profile /> : <Navigate to="/login" />} />
+                <Route
+                  path="self-assessment"
+                  element={
+                    session ? (
+                      <Suspense fallback={<div>Loading...</div>}>
+                        <SADashboard />
+                      </Suspense>
+                    ) : (
+                      <Navigate to="/login" />
+                    )
+                  }
+                />
+                <Route
+                  path="self-assessment/callback"
+                  element={
+                    session ? (
+                      <Suspense fallback={<div>Loading...</div>}>
+                        <SACallback />
+                      </Suspense>
+                    ) : (
+                      <Navigate to="/login" />
+                    )
+                  }
+                />
               </Route>
             </Routes>
           </OnboardingRouter>

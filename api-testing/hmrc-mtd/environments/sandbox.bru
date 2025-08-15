@@ -1,16 +1,10 @@
 vars {
   base_url: https://test-api.service.hmrc.gov.uk
-  auth_url: https://test-www.tax.service.gov.uk
-  client_id: {{process.env.HMRC_SANDBOX_CLIENT_ID}}
-  client_secret: {{process.env.HMRC_SANDBOX_CLIENT_SECRET}}
-  redirect_uri: {{process.env.SANDBOX_REDIRECT_URI}}
-  scope: hello read:self-assessment write:self-assessment
-  test_user_id: {{process.env.TEST_USER_ID}}
-  test_user_nino: {{process.env.TEST_USER_NINO}}
-  test_mtd_id: {{process.env.TEST_MTD_ID}}
+  nino: NE101272A
+  businessId: XBIS12345678901
+  taxYear: 2025-26
+  access_token: cf1ba15dbda4ed6ecb5d55dea9074e56
+  calculationId: f2fb30e5-4ab6-4a29-b3c1-c7264259ff1c
+  lossId: AAZZ1234567890a
+  claimId: AAZZ1234567890b
 }
-
-vars:secret [
-  access_token,
-  refresh_token
-]

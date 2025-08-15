@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '@/supabaseClient'
 import { User } from '@supabase/supabase-js'
 import {
@@ -14,6 +14,7 @@ import {
   Users,
   ChevronsUpDown,
   LucideIcon,
+  FileCheck,
 } from 'lucide-react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -59,6 +60,11 @@ const items: MenuItem[] = [
     title: 'Entities',
     url: '/entities',
     icon: Building2,
+  },
+  {
+    title: 'Self Assessment',
+    url: '/self-assessment',
+    icon: FileCheck,
   },
   {
     title: 'Calculations',
@@ -148,10 +154,10 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link to={item.url}>
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -165,10 +171,10 @@ export function AppSidebar() {
               {bottomItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link to={item.url}>
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

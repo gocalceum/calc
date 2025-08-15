@@ -1,14 +1,11 @@
 vars {
   base_url: https://api.service.hmrc.gov.uk
-  auth_url: https://www.tax.service.gov.uk
-  client_id: {{process.env.HMRC_PROD_CLIENT_ID}}
-  client_secret: {{process.env.HMRC_PROD_CLIENT_SECRET}}
-  redirect_uri: https://app.calceum.com/hmrc-callback
-  scope: read:self-assessment write:self-assessment
+  nino: {{PRODUCTION_NINO}}
+  businessId: {{PRODUCTION_BUSINESS_ID}}
+  taxYear: 2023-24
+  access_token: {{PRODUCTION_ACCESS_TOKEN}}
+  Gov-Test-Scenario: 
+  calculationId: {{PRODUCTION_CALC_ID}}
+  lossId: {{PRODUCTION_LOSS_ID}}
+  claimId: {{PRODUCTION_CLAIM_ID}}
 }
-
-vars:secret [
-  client_secret,
-  access_token,
-  refresh_token
-]
