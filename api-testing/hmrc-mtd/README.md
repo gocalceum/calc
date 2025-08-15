@@ -2,6 +2,34 @@
 
 This directory contains the Bruno collection for testing HMRC Making Tax Digital (MTD) APIs.
 
+## ⚠️ Important: Repository Structure
+
+To keep the repository clean and manageable:
+
+### What IS Committed:
+- ✅ Bruno test files (`.bru` files) - 219 API tests
+- ✅ Test scripts (`.sh`, `.ts` files)
+- ✅ Configuration files
+- ✅ Essential documentation
+
+### What is NOT Committed (git-ignored):
+- ❌ OpenAPI specifications (>130,000 lines) - download when needed
+- ❌ Generated HTML reports
+- ❌ Token files and credentials
+- ❌ Large documentation files (SVGs, PDFs)
+- ❌ Postman collections
+
+### Downloading OpenAPI Specs
+
+If you need the OpenAPI specifications for reference:
+
+```bash
+# Download specs from HMRC Developer Hub
+./download-specs.sh
+```
+
+The specs will be downloaded to `openapi-specs/` but are git-ignored to keep the repository size manageable.
+
 ## Quick Start
 
 ### 1. Install Bruno Desktop App
