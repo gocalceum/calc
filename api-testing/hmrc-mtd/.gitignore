@@ -60,3 +60,21 @@ postman-*.json
 # Backup files
 *.bak
 *.backup
+
+# Large OpenAPI specs (download these when needed instead)
+openapi-specs/*.yaml
+openapi-specs/*.json
+
+# Documentation that can be fetched online
+docs/*.svg
+docs/*.png
+docs/*.pdf
+
+# Generated HTML reports
+*.html
+test-report-*.html
+mtdit-dashboard-*.html
+
+# Postman collections (we use Bruno instead)
+*.postman_collection.json
+*.postman_environment.json
